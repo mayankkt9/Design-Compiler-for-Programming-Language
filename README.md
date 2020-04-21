@@ -2,7 +2,7 @@
 
 ## 🎈 Rancho Programming Language
 
-## ⚙  How it Install on (MAC)
+## ⚙  How it Install it on (MAC)
 ------------------
 
 * Install SWI-Prolog Version 7.6.4 ([Click to Install 🚀](https://www.swi-prolog.org/download/stable/bin/SWI-Prolog-7.6.4.dmg)) 
@@ -11,7 +11,7 @@
 export PATH=$PATH:/Applications/SWI-Prolog.app/Contents/swipl/bin/x86_64-darwin15.6.0
 export DYLD_FALLBACK_LIBRARY_PATH=/Applications/SWI-Prolog.app/Contents/swipl/lib/x86_64-darwin15.6.0
 ``` 
-* Run main.py
+* Run main.py present in src
 ``` 
 python3 main.py inputfile
 ``` 
