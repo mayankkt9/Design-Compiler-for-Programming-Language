@@ -225,3 +225,15 @@ eval_for_statement(t_conventional_for(A,B,C,D,E,F), Env, FinalEnv) :- eval_bool(
 	eval_for_statement(t_conventional_for(A,B,C,D,E,F), Env4, FinalEnv).
 
 eval_for_statement(t_conventional_for(A,_,C,D,_,_), Env, Env) :- eval_bool(t_bool(A, C, D), Env, _, false).
+
+% Evaluate Command
+eval_command(t_command(), Env, Env).
+
+eval_command(t_command(X, Y), Env, FinalEnv) :- eval_statement(X, Env, Env1), 
+    eval_command(Y, Env1, FinalEnv).
+
+
+% Evaluate Block
+eval_block(t_block(X), Env, FinalEnv):- eval_command(X, Env, FinalEnv).
+
+program_eval(t_program(X), Env):- eval_block(X, [], Env), !.
