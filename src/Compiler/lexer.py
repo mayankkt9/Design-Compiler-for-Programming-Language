@@ -29,16 +29,11 @@ def lexer(file):
                     else:
                         lex+=tokval
                     lex+=","
-                result.append((toknum, tokval))
+                # result.append((toknum, tokval))
     lex = lex[:-1]
     lex += ']'
     print(lex)
     return lex
-    # print(untokenize(result).decode('utf-8'))
-    # for c in result:
-    #     print(c)
-    # print(type(result))
-    # print(c123)
 
 def lexer_job(file):
     str2 = open(file, 'r').read()
