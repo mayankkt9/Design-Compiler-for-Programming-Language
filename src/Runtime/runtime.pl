@@ -55,3 +55,49 @@ eval_expr(t_id(X), Env, Env, _Val):- \+check_present(X, Env), write("Variable no
 
 eval_expr(t_id(X), Env, Env, Val):- lookup(X, Env, Val, Type), Type \= num,
     write("This operation can only be perfomed on num type of variable. Please check."), fail.
+
+% Evaluate Boolean Expression
+not(true, false).
+
+not(false, true).
+
+eval_bool(false, Env, Env, false).
+
+eval_bool(true, Env, Env, true).
+
+eval_bool(t_notbool(not, X), Env, FinalEnv, Val) :- eval_bool(X, Env, FinalEnv, V1), not(V1, Val).
+
+
+eval_bool(t_bool_operation(X, Y, Z), Env, FinalEnv, Val) :- eval_bool(X, Env, Env1, V1),
+    													eval_bool(Z, Env1, FinalEnv, V2),
+    													eval_bool_operator(Y, V1, V2, Val).
+
+eval_bool(t_bool(X, Y, Z), Env, FinalEnv, Val):- eval_expr(X, Env, Env1,V1), 
+    								eval_expr(Z, Env1, FinalEnv,V2),
+    								eval_compare(Y, V1, V2, Val).
+
+eval_compare(t_comp_op(>), V1, V2, true):- V1 > V2.
+eval_compare(t_comp_op(>), V1, V2, false):- V1 =< V2.
+
+eval_compare(t_comp_op(<), V1, V2, true):- V1 < V2.
+eval_compare(t_comp_op(<), V1, V2, false):- V1 >= V2.
+
+eval_compare(t_comp_op(==), V1, V2, true):- V1 =:= V2.
+eval_compare(t_comp_op(==), V1, V2, false):- V1 =\= V2.
+
+eval_compare(t_comp_op(<=), V1, V2, true):- V1 =< V2.
+eval_compare(t_comp_op(<=), V1, V2, false):- V1 > V2.
+                
+eval_compare(t_comp_op(>=), V1, V2, true):- V1 >= V2.
+eval_compare(t_comp_op(>=), V1, V2, false):- V1 < V2.
+
+% Need to test
+eval_bool_operator(t_bool_op_and(and),false,true,false).
+eval_bool_operator(t_bool_op_and(and),false,false,false).
+eval_bool_operator(t_bool_op_and(and),true,false,false).
+eval_bool_operator(t_bool_op_and(and),true,true,true).
+   
+eval_bool_operator(t_bool_op_or(or),false,true,true).
+eval_bool_operator(t_bool_op_or(or),false,false,false).
+eval_bool_operator(t_bool_op_or(or),true,false,true).
+eval_bool_operator(t_bool_op_or(or),true,true,true).
