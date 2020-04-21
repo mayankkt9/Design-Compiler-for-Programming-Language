@@ -101,3 +101,11 @@ eval_bool_operator(t_bool_op_or(or),false,true,true).
 eval_bool_operator(t_bool_op_or(or),false,false,false).
 eval_bool_operator(t_bool_op_or(or),true,false,true).
 eval_bool_operator(t_bool_op_or(or),true,true,true).
+
+
+% Evaluate Ternary Statement
+eval_ternary(t_ternary(X, Y, _), Env, FinalEnv, Val) :- eval_bool(X, Env, Env1, true),
+    eval_expr(Y, Env1, FinalEnv, Val).
+
+eval_ternary(t_ternary(X, _, Z), Env, FinalEnv, Val) :- eval_bool(X, Env, Env1, false),
+    eval_expr(Z, Env1, FinalEnv, Val).
