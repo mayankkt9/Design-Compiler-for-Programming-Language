@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 from pyswip import Prolog
-from compiler.lexer import lexer_job,set_up_env
+from Compiler.lexer import lexer_job,set_up_env
 
 def create_parse_tree(lex):
 
-    prolog.consult("Complier/parseTree.pl")
+    prolog.consult("Compiler/parseTree.pl")
 
     query = "program(P,{},[])."
 
