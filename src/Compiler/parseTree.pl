@@ -85,3 +85,33 @@ elif_stmt(t_elifstmt()) --> [].
 
 else_stmt(t_elifstmt(X)) --> [else], ['{'], command(X), ['}'].
 else_stmt(t_elsefstmt()) --> [].
+
+% for loops
+conventional_for(t_conventional_for(A,B,C,D,E,F)) --> [for], ['('], identifier(A), [=], expr(B), [;], 
+    identifier(A), comparison_operator(C), expr(D), [;], 
+    identifier(A), [=], expr(E), [')'], ['{'], command(F), ['}'].
+
+new_for(t_new_for(A,B,C,D)) --> [for], identifier(A), [in], 
+    [range], ['('], num(B), [,], num(C), [')'], ['{'], command(D), ['}'].
+
+% General Statements and While loop
+statement(t_statement_declaration(X)) --> declaration(X).
+statement(t_statement_assign(X)) --> assignment(X).
+statement(t_statement_print(X)) --> [print], ['('] , printv(X), [')'].
+statement(t_statement_ifelse(X, Y, Z)) --> if_stmt(X), elif_stmt(Y), else_stmt(Z).
+statement(t_statement_while(X, Y)) --> [while], ['('], bool(X), [')'], ['{'], command(Y), ['}'].
+statement(t_statement_for(X)) --> conventional_for(X).
+statement(t_statement_for(X)) --> new_for(X).
+
+
+% Command List and single command is called statement.
+command(t_command(X, Y)) --> statement(X), command(Y).
+command(t_command()) --> [].
+
+
+% Block.
+block(t_block(X))-->[start],command(X),[end].
+
+
+% Program entr point. Will take input as list of tokens and generate parse tree.
+program(t_program(X))-->block(X).
