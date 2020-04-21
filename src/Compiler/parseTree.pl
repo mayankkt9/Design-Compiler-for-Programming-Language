@@ -65,3 +65,23 @@ declaration(t_declaration_num_assign(X, Y)) --> [int], identifier(X), [=], expr(
 declaration(t_declaration_num_assign_ternary(X, Y)) --> [int], identifier(X), [=], ternary_op(Y).
 declaration(t_declaration_num_assign(X, Y)) --> [float], identifier(X), [=], expr(Y).
 declaration(t_declaration_num_assign_ternary(X, Y)) --> [float], identifier(X), [=], ternary_op(Y).
+
+% Assignment statements
+assignment(t_assignment_bool(X, Y)) --> identifier(X), [=], bool(Y).
+assignment(t_assignment_str(X, Y)) --> identifier(X), [=], ['"'], [Y], ['"'].
+assignment(t_declaration_num_assign(X, Y)) --> identifier(X), [=], expr(Y).
+assignment(t_declaration_num_assign_ternary(X, Y)) --> identifier(X), [=], ternary_op(Y).
+
+% Need to implement print statement
+printv(t_print_id(X)) --> [X].
+printv(t_print(X)) --> ['"'], [X], ['"'].
+
+
+% if else statements
+if_stmt(t_ifstmt(X, Y)) --> [if], ['('], bool(X), [')'], ['{'], command(Y), ['}'].
+
+elif_stmt(t_elifstmt(X, Y, Z)) --> [elif], ['('], bool(X), [')'], ['{'], command(Y), ['}'], elif_stmt(Z).
+elif_stmt(t_elifstmt()) --> [].
+
+else_stmt(t_elifstmt(X)) --> [else], ['{'], command(X), ['}'].
+else_stmt(t_elsefstmt()) --> [].
