@@ -127,8 +127,8 @@ eval_statement(t_declaration_num_assign_ternary(t_id(X), Y), Env, FinalEnv) :-
 eval_statement(t_statement_declaration(X), Env, FinalEnv) :- eval_statement(X, Env, FinalEnv).
 
 % May need to modiy it depending upon what we are printing
-eval_statement(t_statement_print(t_print(X)), Env, Env) :- write(X).
-eval_statement(t_statement_print(t_print_id(X)), Env, Env) :- lookup(X, Env, Val, _), write(Val).
+eval_statement(t_statement_print(t_print(X)), Env, Env) :- write(X),nl.
+eval_statement(t_statement_print(t_print_id(X)), Env, Env) :- lookup(X, Env, Val, _), write(Val),nl.
 eval_statement(t_statement_print(t_print_id(X)), Env, Env) :- \+check_present(X, Env), 
     write("Variable not initialised. Please check.").
 

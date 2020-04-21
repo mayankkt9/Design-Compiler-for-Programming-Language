@@ -10,19 +10,22 @@ def lexer_job():
     lex += '['
     for i in range(0, len(str1)):
         ascii = reduce(lambda x, y: str(x)+str(y), map(ord, str1[i]))
+        ascii_prev = 0
+        if i > 1:
+            ascii_prev = reduce(lambda x, y: str(x)+str(y), map(ord, str1[i-1]))
         # print(str1[i]+ " "+str(ascii))
         if i > 1 and str1[i] == '=' and str1[i-1] == ':':
             continue
-        if str1[i] == ':' and str1[i+1] == '=':
+        if i > 3 and (ascii_prev == "9696" or ascii_prev == "3939") and str1[i-2]=='(' and str1[i-3]=="print":
+            lex += '"'+str1[i]+'"'
+        elif str1[i] == ':' and str1[i+1] == '=':
             lex += str1[i]+str1[i+1]
             i += 2
         elif str1[i] == '(':
             lex += "'('"
         elif str1[i] == ')':
             lex += "')'"
-        elif ascii == "9696":
-            lex += "'\"'"
-        elif ascii == "3939":
+        elif ascii == "9696" or ascii == "3939":
             lex += "'\"'"
         elif str1[i] == '}':
             lex += "'}'"

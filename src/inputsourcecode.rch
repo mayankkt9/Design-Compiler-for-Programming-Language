@@ -3,4 +3,6 @@ start
     if(x > 0) {
         x = 2
     }
+    print(x)
+    print("Hello")
 end

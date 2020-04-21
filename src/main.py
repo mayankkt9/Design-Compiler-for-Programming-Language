@@ -10,14 +10,17 @@ def create_parse_tree(lex):
 
     parsetree = prolog.query(query.format(lex))
 
-    return next(parsetree)["P"]
+    x = next(parsetree)["P"]
+    y = x.replace("(b'","('")
+
+    return y
 
 def give_semantics(parse_tree):
     prolog.consult("Runtime/runtime.pl")
     query = "program_eval({},Z)"
 
     Env = prolog.query(query.format(parse_tree))
-
+    # print(list(Env))
     print(next(Env)["Z"])
 
 
