@@ -1,6 +1,6 @@
 ## 🎈 Rancho Programming Language
 
-## ⚙  How it Install it on (MAC)
+## ⚙  How to Install it on (MAC)
 ------------------
 
 * Install SWI-Prolog Version 7.6.4 ([Click to Install 🚀](https://www.swi-prolog.org/download/stable/bin/SWI-Prolog-7.6.4.dmg)) 
