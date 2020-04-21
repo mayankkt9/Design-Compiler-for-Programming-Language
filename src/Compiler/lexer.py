@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from nltk.tokenize import sent_tokenize, word_tokenize
 from functools import reduce
-
+import nltk
 
 def lexer_job():
     str2 = open('inputsourcecode.rch', 'r').read()
@@ -39,9 +39,7 @@ def lexer_job():
 
 
 def set_up_env():
-    import nltk
-    nltk.download('punkt')
-
-
-
-
+    try:
+        nltk.data.find('tokenizers/punkt')
+    except LookupError:
+        nltk.download('punkt')

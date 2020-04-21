@@ -21,7 +21,7 @@ def give_semantics(parse_tree):
     print(next(Env)["Z"])
 
 
-# set_up_env()
+set_up_env()
 prolog = Prolog()
 lex = lexer_job()
 parse_tree = create_parse_tree(lex)
