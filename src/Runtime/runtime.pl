@@ -122,3 +122,34 @@ eval_statement(t_declaration_num_assign(t_id(X),Y), Env, FinalEnv) :-
 
 eval_statement(t_declaration_num_assign_ternary(t_id(X), Y), Env, FinalEnv) :- 
     eval_ternary(Y, Env, Env1, Val), update(X, Val, num, Env1 , FinalEnv).
+
+% Evaluate Statements
+eval_statement(t_statement_declaration(X), Env, FinalEnv) :- eval_statement(X, Env, FinalEnv).
+
+% May need to modiy it depending upon what we are printing
+eval_statement(t_statement_print(t_print(X)), Env, Env) :- write(X).
+eval_statement(t_statement_print(t_print_id(X)), Env, Env) :- lookup(X, Env, Val, _), write(Val).
+eval_statement(t_statement_print(t_print_id(X)), Env, Env) :- \+check_present(X, Env), 
+    write("Variable not initialised. Please check.").
+
+eval_statement(t_statement_ifelse(_, t_elifstmt(), _), Env, Env) :- false.
+
+eval_statement(t_statement_ifelse(_, _, t_elifstmt(X)), Env, FinalEnv) :- 
+    eval_command(X, Env, FinalEnv).
+
+eval_statement(t_statement_ifelse(_, _, t_elifstmt()), Env, Env) :- true.
+
+eval_statement(t_statement_while(X,Y), Env, FinalEnv):- eval_bool(X, Env, Env1, true), 
+    										eval_command(Y, Env1, Env2),
+    										eval_statement(t_statement_while(X,Y), Env2, FinalEnv).
+
+eval_statement(t_statement_while(X,_), Env, FinalEnv):- eval_bool(X, Env, FinalEnv, false).
+
+eval_statement(t_statement_ifelse(t_ifstmt(X, Y), _, _), Env, FinalEnv) :-
+    eval_bool(X, Env, Env1, true), eval_command(Y, Env1, FinalEnv).
+    
+eval_statement(t_statement_ifelse(_, t_elifstmt(X, Y, _), _), Env, FinalEnv) :-
+    eval_bool(X, Env, Env1, true), eval_command(Y, Env1, FinalEnv).
+
+eval_statement(t_statement_ifelse(_, t_elifstmt(X, _, Z), _), Env, FinalEnv) :-
+    eval_bool(X, Env, Env1, false), eval_statement(Z, Env1, FinalEnv).
