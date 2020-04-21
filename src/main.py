@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from pyswip import Prolog
 from Compiler.lexer import lexer_job,set_up_env
-
+import sys
 def create_parse_tree(lex):
 
     prolog.consult("Compiler/parseTree.pl")
@@ -23,9 +23,18 @@ def give_semantics(parse_tree):
     # print(list(Env))
     print(next(Env)["Z"])
 
+def get_arg():
+	file = ""
+	try:
+		file = sys.argv[1]
+	except:
+		print("Error \nScript Usage -> python3 main.py inputfile")
+		sys.exit(2)
+	return file
 
 set_up_env()
 prolog = Prolog()
-lex = lexer_job()
+file = get_arg()
+lex = lexer_job(file)
 parse_tree = create_parse_tree(lex)
 give_semantics(parse_tree)
