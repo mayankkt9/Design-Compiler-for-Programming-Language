@@ -23,5 +23,4 @@ You can get input file from sample folder
 python3 main.py <inputfile>
 Example 
 python3 main.py sourcecode.rch
-
 ``` 
