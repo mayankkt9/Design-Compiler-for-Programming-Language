@@ -26,10 +26,10 @@ eval_expr(t_assign(t_id(X), Y), Env, FinalEnv, Val):- check_present(X, Env),
     eval_expr(Y, Env, Env1, Val), update(X, Val, num, Env1, FinalEnv).
 
 eval_expr(t_assign(t_id(X), _Y), Env, _FinalEnv, _Val):- \+check_present(X, Env),
-    write("Variable not initialised. Please check."), fail.
+    write("Variable not initialised. Please check."),nl, fail.
 
 eval_expr(t_assign(t_id(X), _Y), Env, _FinalEnv, _Val):- lookup(X, Env, _, Type),
-    Type \= num, write("This operation can only be perfomed on num type of variable. Please check."), fail.
+    Type \= num, write("This operation can only be perfomed on num type of variable. Please check."),nl, fail.
 
 eval_expr(t_add(X, Y), Env, FinalEnv, Val):- eval_expr(X, Env, Env1, V1),
                                              eval_expr(Y, Env1, FinalEnv, V2),
@@ -51,10 +51,10 @@ eval_expr(t_num(X), Env, Env, X).
 
 eval_expr(t_id(X), Env, Env, Val):- check_present(X, Env), lookup(X, Env, Val, num).
 
-eval_expr(t_id(X), Env, Env, _Val):- \+check_present(X, Env), write("Variable not initialised. Please check."), fail.
+eval_expr(t_id(X), Env, Env, _Val):- \+check_present(X, Env), write("Variable not initialised. Please check."),nl, fail.
 
 eval_expr(t_id(X), Env, Env, Val):- lookup(X, Env, Val, Type), Type \= num,
-    write("This operation can only be perfomed on num type of variable. Please check."), fail.
+    write("This operation can only be perfomed on num type of variable. Please check."),nl, fail.
 
 % Evaluate Boolean Expression
 not(true, false).
@@ -130,7 +130,7 @@ eval_statement(t_statement_declaration(X), Env, FinalEnv) :- eval_statement(X, E
 eval_statement(t_statement_print(t_print(X)), Env, Env) :- write(X),nl.
 eval_statement(t_statement_print(t_print_id(X)), Env, Env) :- lookup(X, Env, Val, _), write(Val),nl.
 eval_statement(t_statement_print(t_print_id(X)), Env, Env) :- \+check_present(X, Env), 
-    write("Variable not initialised. Please check.").
+    write("Variable not initialised. Please check."),nl.
 
 eval_statement(t_statement_ifelse(_, t_elifstmt(), _), Env, Env) :- false.
 
