@@ -22,8 +22,8 @@ def lexer(file):
         else:
             if(len(tokval)!=0):
                 ascii = reduce(lambda x, y: str(x)+str(y), map(ord, tokval))
-                if ascii != 10 and tokval != "utf-8" and ascii != "32323232":
-                    # print(str(ascii)+" tokval = "+tokval)
+                if ascii != 10 and tokval != "utf-8" and ascii != "32323232" and ascii != 9:
+                    print(str(ascii)+" tokval = "+tokval)
                     if tokval==')' or tokval=='(' or tokval=='{' or tokval=='}':
                         lex += "'"+tokval+"'"
                     else:
