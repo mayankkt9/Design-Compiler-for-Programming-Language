@@ -156,29 +156,29 @@ eval_statement(t_statement_ifelse(_, t_elifstmt(X, _, Z), _), Env, FinalEnv) :-
 
 % Evaluate assign statements
 eval_statement(t_assignment_bool(t_id(X), _Y), Env, _FinalEnv) :- \+check_present(X, Env), 
-    write("Variable not initialised. Please check."), fail.
+    write("Variable not initialised. Please check."),nl, fail.
 eval_statement(t_assignment_bool(t_id(X), Y), Env, FinalEnv) :- lookup(X, Env, _, bool), eval_bool(Y, Env, Env1, Val),
     update(X, Val, bool, Env1, FinalEnv).
 eval_statement(t_assignment_bool(t_id(X), _Y), Env, _FinalEnv) :- lookup(X, Env, _, Type), Type \= bool,
-    write("Cannot assign this value to non boolean type of variable"), fail.
+    write("Cannot assign this value to non boolean type of variable"),nl, fail.
 
 eval_statement(t_assignment_str(t_id(X), _Y), Env, _FinalEnv) :- \+check_present(X, Env), 
-    write("Variable not initialised. Please check.").
+    write("Variable not initialised. Please check."),nl.
 
 eval_statement(t_assignment_str(t_id(X), Y), Env, FinalEnv) :- lookup(X, Env, _, str), 
     update(X, Y, str, Env, FinalEnv).
 
 eval_statement(t_assignment_str(t_id(X), _Y), Env, _FinalEnv) :- lookup(X, Env, _, Type), 
 	Type \= str,
-    write("Cannot assign this value to non string type of variable").
+    write("Cannot assign this value to non string type of variable"),nl.
 
 eval_statement(t_declaration_num_assign(t_id(X), _Y), Env, _FinalEnv) :- 
 	\+check_present(X, Env), 
-    write("Variable not initialised. Please check."), fail.
+    write("Variable not initialised. Please check."),nl, fail.
 
 eval_statement(t_declaration_num_assign_ternary(t_id(X), _Y), Env, _FinalEnv) :- 
 	\+check_present(X, Env), 
-    write("Variable not initialised. Please check."), fail.
+    write("Variable not initialised. Please check."),nl, fail.
 
 eval_statement(t_declaration_num_assign(t_id(X), Y), Env, FinalEnv) :- 
 	lookup(X, Env, _, num), 
@@ -193,13 +193,13 @@ eval_statement(t_declaration_num_assign_ternary(t_id(X), Y), Env, FinalEnv) :-
 eval_statement(t_declaration_num_assign(t_id(X), _Y), Env, _FinalEnv) :- 
 	lookup(X, Env, _, Type), 
 	Type \= num,
-    write("Cannot assign this value to non boolean type of variable"), 
+    write("Cannot assign this value to non boolean type of variable"),nl, 
 	fail.
 
 eval_statement(t_declaration_num_assign_ternary(t_id(X), _Y), Env, _FinalEnv) :- 
 	lookup(X, Env, _, Type), 
 	Type \= num,
-    write("Cannot assign this value to non boolean type of variable"), 
+    write("Cannot assign this value to non boolean type of variable"),nl, 
 	fail.
 
 eval_statement(t_statement_assign(X), Env, FinalEnv) :- eval_statement(X, Env, FinalEnv).
@@ -210,7 +210,7 @@ eval_statement(t_new_for(A,B,C,D), Env, FinalEnv) :-
     eval_statement(t_conventional_for(A,B,t_comp_op(<),C, t_assign(A, t_add(A, t_num(1))),D), Env, FinalEnv).
 
 eval_statement(t_conventional_for(A,_B,_C,_D,_E,_F), Env, _FinalEnv) :- \+check_present(A, Env), 
-    write("Variable not initialised. Please check."), fail.
+    write("Variable not initialised. Please check."),nl, fail.
 
 eval_statement(t_conventional_for(A,B,C,D,E,F), Env, FinalEnv) :- eval_expr(B, Env, Env1, Val), 
     lookup(A, Env1, _, Type), 
