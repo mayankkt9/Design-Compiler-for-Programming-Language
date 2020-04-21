@@ -109,3 +109,16 @@ eval_ternary(t_ternary(X, Y, _), Env, FinalEnv, Val) :- eval_bool(X, Env, Env1, 
 
 eval_ternary(t_ternary(X, _, Z), Env, FinalEnv, Val) :- eval_bool(X, Env, Env1, false),
     eval_expr(Z, Env1, FinalEnv, Val).
+
+% Evaluate Declaration Statements
+eval_statement(t_declaration_bool_assign(t_id(X),Y), Env, FinalEnv) :- 
+    eval_bool(Y, Env, Env1, Val), update(X, Val, bool, Env1 , FinalEnv).
+
+eval_statement(t_declaration_str_assign(t_id(X),Y), Env, FinalEnv) :- 
+    update(X, Y, str, Env , FinalEnv).
+
+eval_statement(t_declaration_num_assign(t_id(X),Y), Env, FinalEnv) :- 
+    eval_expr(Y, Env, Env1, Val), update(X, Val, num, Env1 , FinalEnv).
+
+eval_statement(t_declaration_num_assign_ternary(t_id(X), Y), Env, FinalEnv) :- 
+    eval_ternary(Y, Env, Env1, Val), update(X, Val, num, Env1 , FinalEnv).
