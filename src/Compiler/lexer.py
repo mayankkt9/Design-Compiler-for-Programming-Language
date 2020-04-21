@@ -2,6 +2,43 @@
 from nltk.tokenize import sent_tokenize, word_tokenize
 from functools import reduce
 import nltk
+from tokenize import tokenize, untokenize, NUMBER, STRING, NAME, OP
+from io import BytesIO
+
+def lexer(file):
+    str2 = open(file, 'r').read()
+    result = []
+    c123 = ""
+    lex = "["
+    str1 = tokenize(BytesIO(str2.encode('utf-8')).readline) 
+    for toknum, tokval, _, _, _ in str1:
+        if toknum == NUMBER and '.' in tokval:  # replace NUMBER tokens
+            result.extend([
+                (NAME, 'Decimal'),
+                (OP, '('),
+                (STRING, repr(tokval)),
+                (OP, ')')
+            ])
+        else:
+            if(len(tokval)!=0):
+                ascii = reduce(lambda x, y: str(x)+str(y), map(ord, tokval))
+                if ascii != 10 and tokval != "utf-8" and ascii != "32323232":
+                    # print(str(ascii)+" tokval = "+tokval)
+                    if tokval==')' or tokval=='(' or tokval=='{' or tokval=='}':
+                        lex += "'"+tokval+"'"
+                    else:
+                        lex+=tokval
+                    lex+=","
+                result.append((toknum, tokval))
+    lex = lex[:-1]
+    lex += ']'
+    print(lex)
+    return lex
+    # print(untokenize(result).decode('utf-8'))
+    # for c in result:
+    #     print(c)
+    # print(type(result))
+    # print(c123)
 
 def lexer_job(file):
     str2 = open(file, 'r').read()

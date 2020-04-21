@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from pyswip import Prolog
-from Compiler.lexer import lexer_job,set_up_env
+from Compiler.lexer import lexer_job,set_up_env,lexer
 import sys
 def create_parse_tree(lex):
 
@@ -35,6 +35,6 @@ def get_arg():
 set_up_env()
 prolog = Prolog()
 file = get_arg()
-lex = lexer_job(file)
+lex = lexer(file)
 parse_tree = create_parse_tree(lex)
 give_semantics(parse_tree)

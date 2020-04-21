@@ -1,8 +1,15 @@
 start
+    print("Start")
     int x = 1
-    if(x > 0) {
-        x = 2
-    }
+    int y = 7
+    int z = 11
+    z = x + y + z
+    print(z)
+    z = x + y + 5
+    print(z)
+    int t = z * y - 6 + x 
+    print(t)
+    x = (x*y)/(x*y)
     print(x)
-    print("Hello")
+    print("End")
 end
