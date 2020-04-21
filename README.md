@@ -14,4 +14,4 @@ export DYLD_FALLBACK_LIBRARY_PATH=/Applications/SWI-Prolog.app/Contents/swipl/li
 ``` 
 python3 main.py inputfile
 ``` 
-
+You can get input file from sample folder
