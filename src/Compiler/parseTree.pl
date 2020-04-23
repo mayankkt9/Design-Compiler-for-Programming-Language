@@ -1,7 +1,7 @@
 % Parse Tree Generator
 %:- use_rendering(svgtree).
 
-:- use_module(library(tabling)).
+%:- use_module(library(tabling)).
 :- table expr_op/3, term/3, bool/3.
 
 
