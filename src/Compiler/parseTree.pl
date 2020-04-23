@@ -76,8 +76,8 @@ assignment(t_declaration_num_assign_ternary(X, Y)) --> identifier(X), [=], terna
 % Need to implement print statement
 eprintv(t_print()) --> [].
 eprintv(X) --> [,], printv(X).
-printv(t_print(X, Y)) --> ['"'], [X], ['"'], eprintv(Y).
-printv(t_print_id(X, Y)) --> expr(X), eprintv(Y).
+printv(t_print(X, Y)) --> [X], {string(X)}, eprintv(Y).
+printv(t_print_expr(X, Y)) --> expr(X), eprintv(Y).
 
 
 % if else statements
