@@ -65,6 +65,13 @@ eval_bool(false, Env, Env, false).
 
 eval_bool(true, Env, Env, true).
 
+eval_bool(t_id(X), Env, Env, Val) :- check_present(X, Env), lookup(X, Env, Val, bool).
+
+eval_bool(t_id(X), Env, Env, _Val):- \+check_present(X, Env), write("Variable not initialised. Please check."),nl, fail.
+
+eval_bool(t_id(X), Env, Env, Val):- lookup(X, Env, Val, Type), Type \= bool,
+    write("This operation can only be perfomed on boolean type of variable. Please check."),nl, fail.
+
 eval_bool(t_notbool(not, X), Env, FinalEnv, Val) :- eval_bool(X, Env, FinalEnv, V1), not(V1, Val).
 
 

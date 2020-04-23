@@ -1,7 +1,7 @@
 % Parse Tree Generator
 %:- use_rendering(svgtree).
 
-%:- use_module(library(tabling)).
+:- use_module(library(tabling)).
 :- table expr_op/3, term/3, bool/3.
 
 
@@ -38,9 +38,10 @@ boolean_operator(t_bool_op_and(and))  --> [and].
 boolean_operator(t_bool_op_or(or))  --> [or].
 
 
-% Boolena Operations
+% Boolean Operations
 bool(false)-->[false].
 bool(true)--> [true].
+bool(X) --> identifier(X).
 bool(t_notbool(not, X))--> [not], bool(X).
 bool(t_bool(X,Y,Z))--> expr(X), comparison_operator(Y), expr(Z).
 bool(t_bool_operation(X, Y, Z)) --> bool(X), boolean_operator(Y), bool(Z).
@@ -73,8 +74,8 @@ assignment(t_declaration_num_assign(X, Y)) --> identifier(X), [=], expr(Y).
 assignment(t_declaration_num_assign_ternary(X, Y)) --> identifier(X), [=], ternary_op(Y).
 
 % Need to implement print statement
-printv(t_print_id(X)) --> [X].
 printv(t_print(X)) --> ['"'], [X], ['"'].
+printv(t_print_id(X)) --> [X].
 
 
 % if else statements
