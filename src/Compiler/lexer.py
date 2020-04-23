@@ -11,6 +11,7 @@ def lexer(file):
     c123 = ""
     lex = "["
     str1 = tokenize(BytesIO(str2.encode('utf-8')).readline) 
+    prev=""
     for toknum, tokval, _, _, _ in str1:
         if toknum == NUMBER and '.' in tokval:  # replace NUMBER tokens
             result.extend([
@@ -23,12 +24,18 @@ def lexer(file):
             if(len(tokval)!=0):
                 ascii = reduce(lambda x, y: str(x)+str(y), map(ord, tokval))
                 if ascii != 10 and tokval != "utf-8" and ascii != "32323232" and ascii != 9:
-                    # print(str(ascii)+" tokval = "+tokval)
+                    # print(str(type(tokval))+" "+str(ascii)+" tokval = "+tokval)
+                    if prev=='(' and tokval[0]=='"':
+                        lex+="'\"',"
+                    if tokval==')' and prev[len(prev)-1]=='"':
+                        lex+="'\"',"
                     if tokval==')' or tokval=='(' or tokval=='{' or tokval=='}':
                         lex += "'"+tokval+"'"
                     else:
                         lex+=tokval
                     lex+=","
+                    
+                    prev=tokval
                 # result.append((toknum, tokval))
     lex = lex[:-1]
     lex += ']'
