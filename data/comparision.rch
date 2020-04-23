@@ -1,0 +1,19 @@
+start
+    int a = 1
+    int b = 5
+    int c = 5
+    int d = 1
+    boolean e = false
+    e = a < b
+    print(e)
+    e = a > b
+    print(e)
+    e = a <= d
+    print(e)
+    e = a >= d
+    print(e)
+    e = a >= c
+    print(e)
+    e = b == c
+    print(e)
+end

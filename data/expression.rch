@@ -11,4 +11,12 @@ start
     print(d)
     d = b / 5 * 6 + (4 * c)
     print(d)
+    d = a = (20 * 2 + 5)
+    print(a)
+    print(d)
+    a = 1
+    d = a = (20 * a + 5)
+    print(d)
+    d = d = (5 + b * 2 - (3 - 2))
+    print(d)
 end
