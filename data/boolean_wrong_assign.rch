@@ -1,0 +1,7 @@
+start
+    boolean a = true
+    boolean b = false
+    int f = 1
+    a = f and b
+    print(e)
+end

@@ -18,6 +18,7 @@ lookup(K, [_|T], V, Type) :- lookup(K, T, V, Type).
 
 % Check if an identifier is present in env.
 check_present(t_id(K),Env) :- check_present(K, Env).
+check_present(_,[]) :- !.
 check_present(K,[(K,_,_)|_]).
 check_present(K,[(H,_,_)|T]) :- K \= H, check_present(K,T).
 
@@ -67,10 +68,11 @@ eval_bool(true, Env, Env, true).
 
 eval_bool(t_id(X), Env, Env, Val) :- check_present(X, Env), lookup(X, Env, Val, bool).
 
-eval_bool(t_id(X), Env, Env, _Val):- \+check_present(X, Env), write("Variable not initialised. Please check."),nl, fail.
-
 eval_bool(t_id(X), Env, Env, Val):- lookup(X, Env, Val, Type), Type \= bool,
-    write("This operation can only be perfomed on boolean type of variable. Please check."),nl, fail.
+    write("This operation can only be perfomed on boolean type of variable. Please check."), nl, fail.
+
+eval_bool(t_id(X), Env, Env, _Val):- \+check_present(X, Env), write("Variable not initialised. Please check."), 
+    nl, fail.
 
 eval_bool(t_notbool(not, X), Env, FinalEnv, Val) :- eval_bool(X, Env, FinalEnv, V1), not(V1, Val).
 
@@ -170,7 +172,7 @@ eval_statement(t_assignment_bool(t_id(X), _Y), Env, _FinalEnv) :- lookup(X, Env,
     write("Cannot assign this value to non boolean type of variable"),nl, fail.
 
 eval_statement(t_assignment_str(t_id(X), _Y), Env, _FinalEnv) :- \+check_present(X, Env), 
-    write("Variable not initialised. Please check."),nl.
+    write("Variable not initialised. Please check."),nl, fail.
 
 eval_statement(t_assignment_str(t_id(X), Y), Env, FinalEnv) :- lookup(X, Env, _, str), 
     update(X, Y, str, Env, FinalEnv).
