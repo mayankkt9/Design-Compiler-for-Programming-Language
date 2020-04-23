@@ -1,7 +1,7 @@
 % Parse Tree Generator
 %:- use_rendering(svgtree).
 
-:- use_module(library(tabling)).
+%:- use_module(library(tabling)).
 :- table expr_op/3, term/3, bool/3.
 
 
@@ -93,7 +93,7 @@ conventional_for(t_conventional_for(A,B,C,D,E,F)) --> [for], ['('], identifier(A
     identifier(A), [=], expr(E), [')'], ['{'], command(F), ['}'].
 
 new_for(t_new_for(A,B,C,D)) --> [for], identifier(A), [in], 
-    [range], ['('], num(B), [,], num(C), [')'], ['{'], command(D), ['}'].
+    [range], ['('], expr(B), [,], expr(C), [')'], ['{'], command(D), ['}'].
 
 % General Statements and While loop
 statement(t_statement_declaration(X)) --> declaration(X).
