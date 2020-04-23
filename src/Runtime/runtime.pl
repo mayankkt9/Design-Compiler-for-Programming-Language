@@ -111,6 +111,13 @@ eval_bool_operator(t_bool_op_or(or),false,false,false).
 eval_bool_operator(t_bool_op_or(or),true,false,true).
 eval_bool_operator(t_bool_op_or(or),true,true,true).
 
+eval_print(t_print(), Env, Env) :- nl.
+eval_print(t_print(X, Y), Env, FinalEnv) :- write(X), eval_statement(Y, Env, FinalEnv).
+eval_print(t_print_id(X, Y), Env, FinalEnv) :- eval_expr(X, Env, Env1, Val), write(Val), eval_print(Y, Env1, FinalEnv).
+eval_print(t_print_id(X, _Y), Env, Env) :- \+check_present(X, Env), 
+    write("Variable not initialised. Please check."), nl.
+
+
 
 % Evaluate Ternary Statement
 eval_ternary(t_ternary(X, Y, _), Env, FinalEnv, Val) :- eval_bool(X, Env, Env1, true),
@@ -135,11 +142,7 @@ eval_statement(t_declaration_num_assign_ternary(t_id(X), Y), Env, FinalEnv) :-
 % Evaluate Statements
 eval_statement(t_statement_declaration(X), Env, FinalEnv) :- eval_statement(X, Env, FinalEnv).
 
-% May need to modiy it depending upon what we are printing
-eval_statement(t_statement_print(t_print(X)), Env, Env) :- write(X),nl.
-eval_statement(t_statement_print(t_print_id(X)), Env, Env) :- lookup(X, Env, Val, _), write(Val),nl.
-eval_statement(t_statement_print(t_print_id(X)), Env, Env) :- \+check_present(X, Env), 
-    write("Variable not initialised. Please check."),nl.
+eval_statement(t_statement_print(X), Env, FinalEnv) :- eval_print(X, Env, FinalEnv).
 
 eval_statement(t_statement_ifelse(_, t_elifstmt(), _), Env, Env) :- false.
 
