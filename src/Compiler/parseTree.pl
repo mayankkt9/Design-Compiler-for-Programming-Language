@@ -61,8 +61,11 @@ ternary_op(t_ternary(X, Y, Z)) --> bool(X), [?], expr(Y), [:], expr(Z).
 
 % Declaration statements
 declaration(t_declaration_bool_assign(X, Y)) --> [boolean], identifier(X), [=], bool(Y).
+declaration(t_declaration_bool_assign(X)) --> [boolean], identifier(X).
 declaration(t_declaration_str_assign(X, Y)) --> [string], identifier(X), [=], ['"'], [Y], ['"'].
+declaration(t_declaration_str_assign(X)) --> [string], identifier(X).
 declaration(t_declaration_num_assign(X, Y)) --> [int], identifier(X), [=], expr(Y).
+declaration(t_declaration_num_assign(X)) --> [int], identifier(X).
 declaration(t_declaration_num_assign_ternary(X, Y)) --> [int], identifier(X), [=], ternary_op(Y).
 declaration(t_declaration_num_assign(X, Y)) --> [float], identifier(X), [=], expr(Y).
 declaration(t_declaration_num_assign_ternary(X, Y)) --> [float], identifier(X), [=], ternary_op(Y).
@@ -70,8 +73,8 @@ declaration(t_declaration_num_assign_ternary(X, Y)) --> [float], identifier(X), 
 % Assignment statements
 assignment(t_assignment_bool(X, Y)) --> identifier(X), [=], bool(Y).
 assignment(t_assignment_str(X, Y)) --> identifier(X), [=], ['"'], [Y], ['"'].
-assignment(t_declaration_num_assign(X, Y)) --> identifier(X), [=], expr(Y).
-assignment(t_declaration_num_assign_ternary(X, Y)) --> identifier(X), [=], ternary_op(Y).
+assignment(t_assignment_num_assign(X, Y)) --> identifier(X), [=], expr(Y).
+assignment(t_assignment_num_assign_ternary(X, Y)) --> identifier(X), [=], ternary_op(Y).
 
 % Need to implement print statement
 eprintv(t_print()) --> [].

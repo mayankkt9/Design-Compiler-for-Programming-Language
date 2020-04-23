@@ -18,7 +18,6 @@ lookup(K, [_|T], V, Type) :- lookup(K, T, V, Type).
 
 % Check if an identifier is present in env.
 check_present(t_id(K),Env) :- check_present(K, Env).
-check_present(_,[]) :- !.
 check_present(K,[(K,_,_)|_]).
 check_present(K,[(H,_,_)|T]) :- K \= H, check_present(K,T).
 
@@ -112,8 +111,9 @@ eval_bool_operator(t_bool_op_or(or),true,false,true).
 eval_bool_operator(t_bool_op_or(or),true,true,true).
 
 eval_print(t_print(), Env, Env).
-eval_print(t_print(X, Y), Env, FinalEnv) :- write(X), eval_print(Y, Env, FinalEnv).
-eval_print(t_print_expr(X, Y), Env, FinalEnv) :- eval_expr(X, Env, Env1, Val), write(Val), eval_print(Y, Env1, FinalEnv).
+eval_print(t_print(X, Y), Env, FinalEnv) :- write(X), nl, eval_print(Y, Env, FinalEnv).
+eval_print(t_print_expr(X, Y), Env, FinalEnv) :- eval_expr(X, Env, Env1, Val), write(Val), 
+    nl, eval_print(Y, Env1, FinalEnv).
 eval_print(t_print_expr(X, _Y), Env, Env) :- \+check_present(X, Env), 
     write("Variable not initialised. Please check."), nl.
 
@@ -130,14 +130,23 @@ eval_ternary(t_ternary(X, _, Z), Env, FinalEnv, Val) :- eval_bool(X, Env, Env1, 
 eval_statement(t_declaration_bool_assign(t_id(X),Y), Env, FinalEnv) :- 
     eval_bool(Y, Env, Env1, Val), update(X, Val, bool, Env1 , FinalEnv).
 
+eval_statement(t_declaration_bool_assign(t_id(X)), Env, FinalEnv) :- 
+    update(X, false, bool, Env , FinalEnv).
+
 eval_statement(t_declaration_str_assign(t_id(X),Y), Env, FinalEnv) :- 
     update(X, Y, str, Env , FinalEnv).
+
+eval_statement(t_declaration_str_assign(t_id(X)), Env, FinalEnv) :- 
+    update(X, "", str, Env , FinalEnv).
 
 eval_statement(t_declaration_num_assign(t_id(X),Y), Env, FinalEnv) :- 
     eval_expr(Y, Env, Env1, Val), update(X, Val, num, Env1 , FinalEnv).
 
 eval_statement(t_declaration_num_assign_ternary(t_id(X), Y), Env, FinalEnv) :- 
     eval_ternary(Y, Env, Env1, Val), update(X, Val, num, Env1 , FinalEnv).
+
+eval_statement(t_declaration_num_assign(t_id(X)), Env, FinalEnv) :- 
+    update(X, 0, num, Env, FinalEnv).
 
 % Evaluate Statements
 eval_statement(t_statement_declaration(X), Env, FinalEnv) :- eval_statement(X, Env, FinalEnv).
@@ -184,31 +193,31 @@ eval_statement(t_assignment_str(t_id(X), _Y), Env, _FinalEnv) :- lookup(X, Env, 
 	Type \= str,
     write("Cannot assign this value to non string type of variable"),nl.
 
-eval_statement(t_declaration_num_assign(t_id(X), _Y), Env, _FinalEnv) :- 
+eval_statement(t_assignment_num_assign(t_id(X), _Y), Env, _FinalEnv) :- 
 	\+check_present(X, Env), 
     write("Variable not initialised. Please check."),nl, fail.
 
-eval_statement(t_declaration_num_assign_ternary(t_id(X), _Y), Env, _FinalEnv) :- 
+eval_statement(t_assignment_num_assign_ternary(t_id(X), _Y), Env, _FinalEnv) :- 
 	\+check_present(X, Env), 
     write("Variable not initialised. Please check."),nl, fail.
 
-eval_statement(t_declaration_num_assign(t_id(X), Y), Env, FinalEnv) :- 
+eval_statement(t_assignment_num_assign(t_id(X), Y), Env, FinalEnv) :- 
 	lookup(X, Env, _, num), 
     eval_expr(Y, Env, Env1, Val), 
 	update(X, Val, num, Env1, FinalEnv).
 
-eval_statement(t_declaration_num_assign_ternary(t_id(X), Y), Env, FinalEnv) :- 
+eval_statement(t_assignment_num_assign_ternary(t_id(X), Y), Env, FinalEnv) :- 
 	lookup(X, Env, _, num), 
     eval_ternary(Y, Env, Env1, Val), 
 	update(X, Val, num, Env1, FinalEnv).
 
-eval_statement(t_declaration_num_assign(t_id(X), _Y), Env, _FinalEnv) :- 
+eval_statement(t_assignment_num_assign(t_id(X), _Y), Env, _FinalEnv) :- 
 	lookup(X, Env, _, Type), 
 	Type \= num,
     write("Cannot assign this value to non boolean type of variable"),nl, 
 	fail.
 
-eval_statement(t_declaration_num_assign_ternary(t_id(X), _Y), Env, _FinalEnv) :- 
+eval_statement(t_assignment_num_assign_ternary(t_id(X), _Y), Env, _FinalEnv) :- 
 	lookup(X, Env, _, Type), 
 	Type \= num,
     write("Cannot assign this value to non boolean type of variable"),nl, 
