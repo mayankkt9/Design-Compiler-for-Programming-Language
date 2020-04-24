@@ -115,8 +115,10 @@ eval_bool_operator(t_bool_op_or(or),true,true,true).
 % Print Statements
 eval_print(t_print(), Env, Env).
 eval_print(t_print(X, Y), Env, FinalEnv) :- write(X), eval_print(Y, Env, FinalEnv).
-eval_print(t_print_expr(X, Y), Env, FinalEnv) :- eval_expr(X, Env, Env1, Val), write(Val), eval_print(Y, Env1, FinalEnv).
-eval_print(t_print_expr(X, _Y), Env, Env) :- \+check_present(X, Env), write("Variable not initialised. Please check."), nl.
+%eval_print(t_print_expr(X, Y), Env, FinalEnv) :- eval_expr(X, Env, Env1, Val), write(Val), eval_print(Y, Env1, FinalEnv).
+eval_print(t_print_id(X, Y), Env, FinalEnv) :- lookup(X,Env,Val,_), write(Val), eval_print(Y, Env, FinalEnv).
+%eval_print(t_print_bool(X, Y), Env, FinalEnv) :- eval_bool(X, Env, Env1,Val), write(Val) , eval_print(Y, Env1, FinalEnv).
+eval_print(t_print_id(X, _Y), Env, Env) :- \+check_present(X, Env), write("Variable not initialised. Please check."), nl.
 
 
 % If else statement

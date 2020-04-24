@@ -62,7 +62,7 @@ ternary_op(t_ternary(X, Y, Z)) --> bool(X), [?], expr(Y), [:], expr(Z).
 % Declaration statements
 declaration(t_declaration_bool_assign(X, Y)) --> [boolean], identifier(X), [=], bool(Y).
 declaration(t_declaration_bool_assign(X)) --> [boolean], identifier(X).
-declaration(t_declaration_str_assign(X, Y)) --> [string], identifier(X), [=], ['"'], [Y], ['"'].
+declaration(t_declaration_str_assign(X, Y)) --> [string], identifier(X), [=], [Y], {string(Y)}.
 declaration(t_declaration_str_assign(X)) --> [string], identifier(X).
 declaration(t_declaration_num_assign(X, Y)) --> [int], identifier(X), [=], expr(Y).
 declaration(t_declaration_num_assign(X)) --> [int], identifier(X).
@@ -80,7 +80,8 @@ assignment(t_assignment_num_assign_ternary(X, Y)) --> identifier(X), [=], ternar
 eprintv(t_print()) --> [].
 eprintv(X) --> [,], printv(X).
 printv(t_print(X, Y)) --> [X], {string(X)}, eprintv(Y).
-printv(t_print_expr(X, Y)) --> expr(X), eprintv(Y).
+printv(t_print_id(X, Y)) --> identifier(X), eprintv(Y).
+%printv(t_print_expr(X, Y)) --> expr(X), eprintv(Y).
 
 
 % if else statements
