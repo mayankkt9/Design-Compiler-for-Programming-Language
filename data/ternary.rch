@@ -1,7 +1,7 @@
 print("Start\n")
-int x = 1
-int y = 7
-int z = x*y<6?x:y
+num x = 1
+num y = 7
+num z = x*y<6?x:y
 print(z,"\n")
 z = x*y>6?x:y
 print(z,"\n")

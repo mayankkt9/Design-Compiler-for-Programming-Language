@@ -1,7 +1,7 @@
-int a = 1
-int b = 5
-int c = 5
-int d = 1
+num a = 1
+num b = 5
+num c = 5
+num d = 1
 boolean e = false
 e = a < b
 print(e)
