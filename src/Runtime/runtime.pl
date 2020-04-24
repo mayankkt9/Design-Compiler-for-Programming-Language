@@ -3,18 +3,13 @@
 % Update Environment
 update(t_id(K), V, Type, Env, FinalEnv) :- update(K, V, Type, Env, FinalEnv).
 update(K, V, Type, [], [(K, V, Type)]).
-
 update(K, V, Type, [(K, _, _)|T], [(K, V, Type)|T]).
-
 update(K, V, Type, [H|T], [H|R]) :- H \= (K,_,_), update(K, V, Type, T, R).
-
 
 % Lookup Value in Environment
 lookup(t_id(K), Env, V, Type) :- lookup(K, Env, V, Type).
 lookup(K, [(K,V,Type)|_], V, Type).
-
 lookup(K, [_|T], V, Type) :- lookup(K, T, V, Type).
-
 
 % Check if an identifier is present in env.
 check_present(t_id(K),Env) :- check_present(K, Env).
@@ -113,16 +108,11 @@ eval_bool_operator(t_bool_op_or(or),false,false,false).
 eval_bool_operator(t_bool_op_or(or),true,false,true).
 eval_bool_operator(t_bool_op_or(or),true,true,true).
 
-
-
 % Print Statements
-eval_print(t_print(), Env, Env).
-eval_print(t_print(X, Y), Env, FinalEnv) :- write(X), eval_print(Y, Env, FinalEnv).
-%eval_print(t_print_expr(X, Y), Env, FinalEnv) :- eval_expr(X, Env, Env1, Val), write(Val), eval_print(Y, Env1, FinalEnv).
-eval_print(t_print_id(X, Y), Env, FinalEnv) :- lookup(X,Env,Val,_), write(Val), eval_print(Y, Env, FinalEnv).
-%eval_print(t_print_bool(X, Y), Env, FinalEnv) :- eval_bool(X, Env, Env1,Val), write(Val) , eval_print(Y, Env1, FinalEnv).
-eval_print(t_print_id(X, _Y), Env, Env) :- \+check_present(X, Env), write("Variable not initialised. Please check."), nl.
-
+eval_print(t_print(X), Env, Env) :- write(X).
+eval_print(t_print_id(X), Env, Env) :- lookup(X, Env, Val, _), write(Val).
+eval_print(t_print_id(X), Env, Env) :- \+check_present(X, Env), 
+    write("Variable not initialised. Please check.").
 
 % If else statement
 eval_ifelse_stmt(t_ifstmt(X, Y, _), Env, FinalEnv) :- eval_bool(X, Env, Env1, true), eval_command(Y, Env1, FinalEnv).
@@ -132,7 +122,6 @@ eval_ifelse_stmt(t_elifstmt(X, _, Z), Env, FinalEnv) :- eval_bool(X, Env, Env1, 
 eval_ifelse_stmt(t_goto_else_stmt(X), Env, FinalEnv) :- eval_ifelse_stmt(X, Env, FinalEnv).
 eval_ifelse_stmt(t_elsestmt(X), Env, FinalEnv) :- eval_command(X, Env, FinalEnv).
 eval_ifelse_stmt(t_elsestmt(), Env, Env) :- true.
-
 
 % Evaluate Ternary Statement
 eval_ternary(t_ternary(X, Y, _), Env, FinalEnv, Val) :- eval_bool(X, Env, Env1, true),
@@ -175,7 +164,6 @@ eval_statement(t_statement_while(X,Y), Env, FinalEnv):- eval_bool(X, Env, Env1, 
     										eval_statement(t_statement_while(X,Y), Env2, FinalEnv).
 
 eval_statement(t_statement_while(X,_), Env, FinalEnv):- eval_bool(X, Env, FinalEnv, false).
-
 
 % Evaluate assign statements
 eval_statement(t_assignment_bool(t_id(X), _Y), Env, _FinalEnv) :- \+check_present(X, Env), 

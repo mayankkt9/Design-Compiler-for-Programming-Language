@@ -4,7 +4,6 @@
 :- use_module(library(tabling)).
 :- table expr_op/3, term/3, bool/3.
 
-
 % Expressions
 expr(t_assign(X, Y)) --> identifier(X), [=], expr_op(Y).
 expr(X) --> expr_op(X).
@@ -24,18 +23,9 @@ brackets(X) --> identifier(X).
 identifier(t_id(X)) -->[X],{X \= true}, {X \= false}, {atom(X)}.
 num(t_num(X)) --> [X], {number(X)}.
 
-/*
-% 4 data types
-data_type-->[num].
-data_type-->[string].
-data_type-->[boolean].
-*/
-
-
 % Boolean Operators
 boolean_operator(t_bool_op_and(and))  --> [and].
 boolean_operator(t_bool_op_or(or))  --> [or].
-
 
 % Boolean Operations
 bool(false)-->[false].
@@ -45,7 +35,6 @@ bool(t_notbool(not, X))--> [not], bool(X).
 bool(t_bool(X,Y,Z))--> expr(X), comparison_operator(Y), expr(Z).
 bool(t_bool_operation(X, Y, Z)) --> bool(X), boolean_operator(Y), bool(Z).
 
-
 % Need to redefine not equal to operator
 comparison_operator(t_comp_op(>)) --> [>].
 comparison_operator(t_comp_op(<)) --> [<].
@@ -53,7 +42,6 @@ comparison_operator(t_comp_op(==)) --> [==].
 comparison_operator(t_comp_op(<=)) --> [<=].
 comparison_operator(t_comp_op(>=)) --> [>=].
 comparison_operator(t_comp_op(=\=)) --> ["!="].
-
 
 % Ternary Operation
 ternary_op(t_ternary(X, Y, Z)) --> bool(X), [?], expr(Y), [:], expr(Z).
@@ -74,12 +62,8 @@ assignment(t_assignment_num_assign(X, Y)) --> identifier(X), [=], expr(Y).
 assignment(t_assignment_num_assign_ternary(X, Y)) --> identifier(X), [=], ternary_op(Y).
 
 % Need to implement print statement
-eprintv(t_print()) --> [].
-eprintv(X) --> [,], printv(X).
-printv(t_print(X, Y)) --> [X], {string(X)}, eprintv(Y).
-printv(t_print_id(X, Y)) --> identifier(X), eprintv(Y).
-%printv(t_print_expr(X, Y)) --> expr(X), eprintv(Y).
-
+printv(t_print(X)) --> [X], {string(X)}.
+printv(t_print_id(X)) --> [X].
 
 % if else statements
 if_stmt(t_ifstmt(X, Y, Z)) --> [if], ['('], bool(X), [')'], ['{'], command(Y), ['}'], elif_stmt(Z).
@@ -107,15 +91,12 @@ statement(t_statement_while(X, Y)) --> [while], ['('], bool(X), [')'], ['{'], co
 statement(t_statement_for(X)) --> conventional_for(X).
 statement(t_statement_for(X)) --> new_for(X).
 
-
 % Command List and single command is called statement.
 command(t_command(X, Y)) --> statement(X), command(Y).
 command(t_command()) --> [].
 
-
 % Block.
 block(t_block(X))-->command(X).
-
 
 % Program entr point. Will take input as list of tokens and generate parse tree.
 program(t_program(X))-->block(X).
