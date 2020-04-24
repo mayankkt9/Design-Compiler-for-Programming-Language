@@ -16,10 +16,16 @@ def lexer(file):
         type : str
         desc : token generated list format
     '''
-    input = open(file, 'r').read()
+    input = open(file, 'r')
+    input_comment_removed = open(file+"_rem",'w')
     result = []
     lex = "["
-    tokenize_str = tokenize(BytesIO(input.encode('utf-8')).readline) 
+    for line in input:
+        if not line.startswith('#'):
+            input_comment_removed.write(line)
+    input_comment_removed.close()
+    process = open(file+"_rem", 'r').read()
+    tokenize_str = tokenize(BytesIO(process.encode('utf-8')).readline) 
     prev=""
     for toknum, tokval, _, _, _ in tokenize_str:
         if(len(tokval)!=0):
