@@ -1,13 +1,11 @@
-start
-    print("Start")
-    int x = 1
-    int y = 7
-    int z = x*y<6?x:y
-    print(z)
-    z = x*y>6?x:y
-    print(z)
-    z = true?x:y
-    print(z)
-    z = false?x:y
-    print(z)
-end
+print("Start\n")
+int x = 1
+int y = 7
+int z = x*y<6?x:y
+print(z,"\n")
+z = x*y>6?x:y
+print(z,"\n")
+z = true?x:y
+print(z,"\n")
+z = false?x:y
+print(z)

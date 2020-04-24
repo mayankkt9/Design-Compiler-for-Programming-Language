@@ -1,27 +1,25 @@
-start
-    boolean a = true
-    boolean b = false
-    boolean c = true
-    boolean d = false
-    boolean e = false
-    e = a and b
-    print(e)
-    e = a and c
-    print(e)
-    e = b and a 
-    print(e)
-    e = b and d
-    print(e)
-    e = a or b
-    print(e)
-    e = a or c
-    print(e)
-    e = b or a
-    print(e)
-    e = b or d
-    print(e)
-    e = not a
-    print(e)
-    e = not b
-    print(e)
-end
+boolean a = true
+boolean b = false
+boolean c = true
+boolean d = false
+boolean e = false
+e = a and b
+print(e)
+e = a and c
+print(e)
+e = b and a 
+print(e)
+e = b and d
+print(e)
+e = a or b
+print(e)
+e = a or c
+print(e)
+e = b or a
+print(e)
+e = b or d
+print(e)
+e = not a
+print(e)
+e = not b
+print(e)
