@@ -99,6 +99,9 @@ eval_compare(t_comp_op(<=), V1, V2, false):- V1 > V2.
 eval_compare(t_comp_op(>=), V1, V2, true):- V1 >= V2.
 eval_compare(t_comp_op(>=), V1, V2, false):- V1 < V2.
 
+eval_compare(t_comp_op(=\=), V1, V2, false):- V1 =:= V2.
+eval_compare(t_comp_op(=\=), V1, V2, true):- V1 =\= V2.
+
 % Need to test
 eval_bool_operator(t_bool_op_and(and),false,true,false).
 eval_bool_operator(t_bool_op_and(and),false,false,false).

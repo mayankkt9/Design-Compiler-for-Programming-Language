@@ -53,7 +53,7 @@ comparison_operator(t_comp_op(<)) --> [<].
 comparison_operator(t_comp_op(==)) --> [==].
 comparison_operator(t_comp_op(<=)) --> [<=].
 comparison_operator(t_comp_op(>=)) --> [>=].
-comparison_operator(t_comp_op('!=')) --> ['!='].
+comparison_operator(t_comp_op(=\=)) --> ["!="].
 
 
 % Ternary Operation
