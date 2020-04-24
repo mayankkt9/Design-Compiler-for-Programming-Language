@@ -1,0 +1,13 @@
+num x = 8
+num y = 5
+num z
+while (x <= 10 and true and y > 4){
+    print("x = ", x, "\n")
+    x = x + 1
+    z = 10
+    while (z == 10){
+        print("inner loop")
+        z = z - 1
+    }
+}
+print("done")
