@@ -110,13 +110,23 @@ eval_bool_operator(t_bool_op_or(or),false,false,false).
 eval_bool_operator(t_bool_op_or(or),true,false,true).
 eval_bool_operator(t_bool_op_or(or),true,true,true).
 
-eval_print(t_print(), Env, Env).
-eval_print(t_print(X, Y), Env, FinalEnv) :- write(X), nl, eval_print(Y, Env, FinalEnv).
-eval_print(t_print_expr(X, Y), Env, FinalEnv) :- eval_expr(X, Env, Env1, Val), write(Val), 
-    nl, eval_print(Y, Env1, FinalEnv).
-eval_print(t_print_expr(X, _Y), Env, Env) :- \+check_present(X, Env), 
-    write("Variable not initialised. Please check."), nl.
 
+
+% Print Statements
+eval_print(t_print(), Env, Env).
+eval_print(t_print(X, Y), Env, FinalEnv) :- write(X), eval_print(Y, Env, FinalEnv).
+eval_print(t_print_expr(X, Y), Env, FinalEnv) :- eval_expr(X, Env, Env1, Val), write(Val), eval_print(Y, Env1, FinalEnv).
+eval_print(t_print_expr(X, _Y), Env, Env) :- \+check_present(X, Env), write("Variable not initialised. Please check."), nl.
+
+
+% If else statement
+eval_ifelse_stmt(t_ifstmt(X, Y, _), Env, FinalEnv) :- eval_bool(X, Env, Env1, true), eval_command(Y, Env1, FinalEnv).
+eval_ifelse_stmt(t_ifstmt(X, _, Z), Env, FinalEnv) :- eval_bool(X, Env, Env1, false), eval_ifelse_stmt(Z, Env1, FinalEnv).
+eval_ifelse_stmt(t_elifstmt(X, Y, _), Env, FinalEnv) :- eval_bool(X, Env, Env1, true), eval_command(Y, Env1, FinalEnv).
+eval_ifelse_stmt(t_elifstmt(X, _, Z), Env, FinalEnv) :- eval_bool(X, Env, Env1, false), eval_ifelse_stmt(Z, Env1, FinalEnv).
+eval_ifelse_stmt(t_goto_else_stmt(X), Env, FinalEnv) :- eval_ifelse_stmt(X, Env, FinalEnv).
+eval_ifelse_stmt(t_elsestmt(X), Env, FinalEnv) :- eval_command(X, Env, FinalEnv).
+eval_ifelse_stmt(t_elsestmt(), Env, Env) :- true.
 
 
 % Evaluate Ternary Statement
@@ -153,12 +163,7 @@ eval_statement(t_statement_declaration(X), Env, FinalEnv) :- eval_statement(X, E
 
 eval_statement(t_statement_print(X), Env, FinalEnv) :- eval_print(X, Env, FinalEnv).
 
-eval_statement(t_statement_ifelse(_, t_elifstmt(), _), Env, Env) :- false.
-
-eval_statement(t_statement_ifelse(_, _, t_elifstmt(X)), Env, FinalEnv) :- 
-    eval_command(X, Env, FinalEnv).
-
-eval_statement(t_statement_ifelse(_, _, t_elifstmt()), Env, Env) :- true.
+eval_statement(t_statement_ifelse(X), Env, FinalEnv) :- eval_ifelse_stmt(X, Env, FinalEnv).
 
 eval_statement(t_statement_while(X,Y), Env, FinalEnv):- eval_bool(X, Env, Env1, true), 
     										eval_command(Y, Env1, Env2),
@@ -166,14 +171,6 @@ eval_statement(t_statement_while(X,Y), Env, FinalEnv):- eval_bool(X, Env, Env1, 
 
 eval_statement(t_statement_while(X,_), Env, FinalEnv):- eval_bool(X, Env, FinalEnv, false).
 
-eval_statement(t_statement_ifelse(t_ifstmt(X, Y), _, _), Env, FinalEnv) :-
-    eval_bool(X, Env, Env1, true), eval_command(Y, Env1, FinalEnv).
-    
-eval_statement(t_statement_ifelse(_, t_elifstmt(X, Y, _), _), Env, FinalEnv) :-
-    eval_bool(X, Env, Env1, true), eval_command(Y, Env1, FinalEnv).
-
-eval_statement(t_statement_ifelse(_, t_elifstmt(X, _, Z), _), Env, FinalEnv) :-
-    eval_bool(X, Env, Env1, false), eval_statement(Z, Env1, FinalEnv).
 
 % Evaluate assign statements
 eval_statement(t_assignment_bool(t_id(X), _Y), Env, _FinalEnv) :- \+check_present(X, Env), 

@@ -84,13 +84,13 @@ printv(t_print_expr(X, Y)) --> expr(X), eprintv(Y).
 
 
 % if else statements
-if_stmt(t_ifstmt(X, Y)) --> [if], ['('], bool(X), [')'], ['{'], command(Y), ['}'].
+if_stmt(t_ifstmt(X, Y, Z)) --> [if], ['('], bool(X), [')'], ['{'], command(Y), ['}'], elif_stmt(Z).
 
 elif_stmt(t_elifstmt(X, Y, Z)) --> [elif], ['('], bool(X), [')'], ['{'], command(Y), ['}'], elif_stmt(Z).
-elif_stmt(t_elifstmt()) --> [].
+elif_stmt(t_goto_else_stmt(X)) --> else_stmt(X).
 
-else_stmt(t_elifstmt(X)) --> [else], ['{'], command(X), ['}'].
-else_stmt(t_elsefstmt()) --> [].
+else_stmt(t_elsestmt(X)) --> [else], ['{'], command(X), ['}'].
+else_stmt(t_elsestmt()) --> [].
 
 % for loops
 conventional_for(t_conventional_for(A,B,C,D,E,F)) --> [for], ['('], identifier(A), [=], expr(B), [;], 
@@ -104,7 +104,7 @@ new_for(t_new_for(A,B,C,D)) --> [for], identifier(A), [in],
 statement(t_statement_declaration(X)) --> declaration(X).
 statement(t_statement_assign(X)) --> assignment(X).
 statement(t_statement_print(X)) --> [print], ['('] , printv(X), [')'].
-statement(t_statement_ifelse(X, Y, Z)) --> if_stmt(X), elif_stmt(Y), else_stmt(Z).
+statement(t_statement_ifelse(X)) --> if_stmt(X).
 statement(t_statement_while(X, Y)) --> [while], ['('], bool(X), [')'], ['{'], command(Y), ['}'].
 statement(t_statement_for(X)) --> conventional_for(X).
 statement(t_statement_for(X)) --> new_for(X).
