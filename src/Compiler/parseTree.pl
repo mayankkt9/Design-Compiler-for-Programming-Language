@@ -5,7 +5,6 @@
 :- table expr_op/3, term/3, bool/3.
 
 
-% Need to implement % operator and I = E too.
 % Expressions
 expr(t_assign(X, Y)) --> identifier(X), [=], expr_op(Y).
 expr(X) --> expr_op(X).
@@ -25,12 +24,12 @@ brackets(X) --> identifier(X).
 identifier(t_id(X)) -->[X],{X \= true}, {X \= false}, {atom(X)}.
 num(t_num(X)) --> [X], {number(X)}.
 
-
+/*
 % 4 data types
-data_type-->[int].
-data_type-->[float].
+data_type-->[num].
 data_type-->[string].
 data_type-->[boolean].
+*/
 
 
 % Boolean Operators
@@ -64,11 +63,9 @@ declaration(t_declaration_bool_assign(X, Y)) --> [boolean], identifier(X), [=], 
 declaration(t_declaration_bool_assign(X)) --> [boolean], identifier(X).
 declaration(t_declaration_str_assign(X, Y)) --> [string], identifier(X), [=], [Y], {string(Y)}.
 declaration(t_declaration_str_assign(X)) --> [string], identifier(X).
-declaration(t_declaration_num_assign(X, Y)) --> [int], identifier(X), [=], expr(Y).
-declaration(t_declaration_num_assign(X)) --> [int], identifier(X).
-declaration(t_declaration_num_assign_ternary(X, Y)) --> [int], identifier(X), [=], ternary_op(Y).
-declaration(t_declaration_num_assign(X, Y)) --> [float], identifier(X), [=], expr(Y).
-declaration(t_declaration_num_assign_ternary(X, Y)) --> [float], identifier(X), [=], ternary_op(Y).
+declaration(t_declaration_num_assign(X, Y)) --> [num], identifier(X), [=], expr(Y).
+declaration(t_declaration_num_assign(X)) --> [num], identifier(X).
+declaration(t_declaration_num_assign_ternary(X, Y)) --> [num], identifier(X), [=], ternary_op(Y).
 
 % Assignment statements
 assignment(t_assignment_bool(X, Y)) --> identifier(X), [=], bool(Y).
