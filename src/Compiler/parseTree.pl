@@ -114,7 +114,7 @@ command(t_command()) --> [].
 
 
 % Block.
-block(t_block(X))-->[start],command(X),[end].
+block(t_block(X))-->command(X).
 
 
 % Program entr point. Will take input as list of tokens and generate parse tree.
