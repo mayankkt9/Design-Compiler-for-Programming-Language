@@ -1,0 +1,14 @@
+num x = 0
+num y = 5
+num p = 0
+num q = 5
+num i = 0
+num j = 0
+for i in range(x, y){
+  for j in range(p , q){
+    if ((i+j)/5==1) {
+          print("This works")
+          }
+    }
+    print("\n")
+}
