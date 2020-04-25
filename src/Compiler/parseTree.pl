@@ -62,8 +62,10 @@ assignment(t_assignment_num_assign(X, Y)) --> identifier(X), [=], expr(Y).
 assignment(t_assignment_num_assign_ternary(X, Y)) --> identifier(X), [=], ternary_op(Y).
 
 % Need to implement print statement
-printv(t_print(X)) --> [X], {string(X)}.
-printv(t_print_id(X)) --> [X].
+eprintv(t_print()) --> [].
+eprintv(X) --> [,], printv(X).
+printv(t_print(X, Y)) --> [X], {string(X)}, eprintv(Y).
+printv(t_print_id(X, Y)) --> identifier(X), eprintv(Y).
 
 % if else statements
 if_stmt(t_ifstmt(X, Y, Z)) --> [if], ['('], bool(X), [')'], ['{'], command(Y), ['}'], elif_stmt(Z).
