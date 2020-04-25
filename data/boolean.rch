@@ -1,3 +1,16 @@
+num x = 4
+num y = 4
+num z = 8
+num t = 5
+
+if ((x == 4 and t == 6) or not (z==5 and y==4)) {
+    print("true \n")
+}
+else { 
+    print("false \n")
+}
+
+
 boolean a = true
 boolean b = false
 boolean c = true

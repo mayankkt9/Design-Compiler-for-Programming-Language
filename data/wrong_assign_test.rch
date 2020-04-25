@@ -3,3 +3,9 @@ boolean b = false
 num f = 1
 a = f and b
 print(e)
+
+
+
+int t  = "abc"
+string s = 123
+boolena m = 1
