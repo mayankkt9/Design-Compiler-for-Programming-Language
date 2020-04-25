@@ -34,6 +34,8 @@ bool(X) --> identifier(X).
 bool(t_notbool(not, X))--> [not], bool(X).
 bool(t_bool(X,Y,Z))--> expr(X), comparison_operator(Y), expr(Z).
 bool(t_bool_operation(X, Y, Z)) --> bool(X), boolean_operator(Y), bool(Z).
+bool(X) --> brkt_bool(X).
+brkt_bool(X)-->['('], bool(X), [')'].
 
 % Need to redefine not equal to operator
 comparison_operator(t_comp_op(>)) --> [>].
