@@ -1,7 +1,7 @@
-int i = 0
-int j = 0
-int a = 10
-int b = 0
+num i = 0
+num j = 0
+num a = 10
+num b = 0
 for i in range(b, a){
     for j in range(b , i){
         print("*")

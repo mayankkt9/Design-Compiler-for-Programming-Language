@@ -1,7 +1,7 @@
-int a = 1
-int b = 5
-int c = 5
-int d = 0
+num a = 1
+num b = 5
+num c = 5
+num d = 0
 d = a + b - c
 print(d)
 d = a * 5 + b * c - 6
