@@ -16,6 +16,7 @@ def lexer(file):
         type : str
         desc : token generated list format
     '''
+    
     input = open(file, 'r')
     input_comment_removed = open(file+"_rem",'w')
     result = []
@@ -32,7 +33,9 @@ def lexer(file):
             ascii = reduce(lambda x, y: str(x)+str(y), map(ord, tokval))
             if ascii != 10 and tokval != "utf-8" and ascii != "32323232" and ascii != 9:
                 # print(str(type(tokval))+" "+str(ascii)+" tokval = "+tokval)
-                if tokval==')' or tokval=='(' or tokval=='{' or tokval=='}' or tokval=='!=':
+                if tokval=='!=':
+                    lex +='"'+tokval+'"'
+                elif tokval==')' or tokval=='(' or tokval=='{' or tokval=='}':
                     lex += "'"+tokval+"'"
                 else:
                     lex+=tokval
