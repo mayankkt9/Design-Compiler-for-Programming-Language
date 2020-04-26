@@ -4,6 +4,20 @@
 :- use_module(library(tabling)).
 :- table expr_op/3, term/3, bool/3.
 
+% Update Environment
+update(t_id(K), Type, Env, FinalEnv) :- updte(K, Type, Env, FinalEnv).
+updte(K, Type, [], [(K,Type)]).
+updte(K, Type, [(K, _)|T], [(K, Type)|T]).
+updte(K, Type, [H|T], [H|R]) :- H \= (K,_), updte(K, Type, T, R).
+
+
+% Lookup Value in Environment
+lookup(t_id(K), Type, Env) :- look_up(K, Type, Env).
+look_up(_K, _Type, []) :- fail.
+look_up(K, Type, [(K,Type)|_T]).
+look_up(K1, Type, [(K2,_T2)|T]) :- K1 \= K2, look_up(K1, Type, T).
+
+
 % Expressions
 expr(t_assign(X, Y)) --> identifier(X), [=], expr_op(Y).
 expr(X) --> expr_op(X).
@@ -28,9 +42,9 @@ boolean_operator(t_bool_op_and(and))  --> [and].
 boolean_operator(t_bool_op_or(or))  --> [or].
 
 % Boolean Operations
-bool(t_bool(X,Y,Z)) --> expr(X), comparison_operator(Y), expr(Z).
 bool(t_bool_operation(X,Y,Z)) --> bool(X), boolean_operator(Y), boolean(Z).
 bool(X) --> boolean(X).
+boolean(t_bool(X,Y,Z)) --> expr(X), comparison_operator(Y), expr(Z).
 boolean(t_notbool(not, X)) --> [not], bool(X).
 boolean(X) --> identifier(X).
 boolean(true) --> [true].
@@ -50,58 +64,61 @@ comparison_operator(t_comp_op(=\=)) --> ["!="].
 ternary_op(t_ternary(X, Y, Z)) --> bool(X), [?], expr(Y), [:], expr(Z).
 
 % Declaration statements
-declaration(t_declaration_bool_assign(X, Y)) --> [boolean], identifier(X), [=], bool(Y).
-declaration(t_declaration_bool_assign(X)) --> [boolean], identifier(X).
-declaration(t_declaration_str_assign(X, Y)) --> [string], identifier(X), [=], [Y], {string(Y)}.
-declaration(t_declaration_str_assign(X)) --> [string], identifier(X).
-declaration(t_declaration_num_assign(X, Y)) --> [num], identifier(X), [=], expr(Y).
-declaration(t_declaration_num_assign(X)) --> [num], identifier(X).
-declaration(t_declaration_num_assign_ternary(X, Y)) --> [num], identifier(X), [=], ternary_op(Y).
+declaration(Env, FinalEnv, t_declaration_bool_assign(X, Y)) --> [boolean], identifier(X), [=], bool(Y), {update(X, bool, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_bool_assign(X)) --> [boolean], identifier(X), {update(X, bool, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_str_assign(X, Y)) --> [string], identifier(X), [=], [Y], {string(Y)}, {update(X, str, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_str_assign(X)) --> [string], identifier(X),{update(X, str, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_num_assign(X, Y)) --> [num], identifier(X), [=], expr(Y), {update(X, num, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_num_assign(X)) --> [num], identifier(X), {update(X, num, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_num_assign_ternary(X, Y)) --> [num], identifier(X), [=], ternary_op(Y), {update(X, num, Env, FinalEnv)}.
 
 % Assignment statements
-assignment(t_assignment_bool(X, Y)) --> identifier(X), [=], bool(Y).
-assignment(t_assignment_str(X, Y)) --> identifier(X), [=], ['"'], [Y], ['"'].
-assignment(t_assignment_num_assign(X, Y)) --> identifier(X), [=], expr(Y).
-assignment(t_assignment_num_assign_ternary(X, Y)) --> identifier(X), [=], ternary_op(Y).
+assignment(Env, Env, t_assignment_num_assign(X, Y)) --> identifier(X), {lookup(X, num, Env)},[=], expr(Y).
+assignment(Env, Env, t_assignment_num_assign_ternary(X, Y)) --> identifier(X), {lookup(X, num, Env)}, [=], ternary_op(Y).
+assignment(Env, Env, t_assignment_bool(X, Y)) --> identifier(X), {lookup(X, bool, Env)}, [=], bool(Y).
+assignment(Env, Env, t_assignment_str(X, Y)) --> identifier(X), {lookup(X, str, Env)},[=], ['"'], [Y], ['"'].
+
 
 % Need to implement print statement
-eprintv(t_print()) --> [].
-eprintv(X) --> [,], printv(X).
-printv(t_print(X, Y)) --> [X], {string(X)}, eprintv(Y).
-printv(t_print_id(X, Y)) --> identifier(X), eprintv(Y).
+eprintv(_Env, t_print()) --> [].
+eprintv(Env, X) --> [,], printv(Env, X).
+printv(Env, t_print(X, Y)) --> [X], {string(X)}, eprintv(Env, Y).
+%printv(Env, t_print_expr(X, Y)) -->
+% print string and bool variables
+printv(Env, t_print_sb_id(X, Y)) --> identifier(X), eprintv(Env, Y).
 
 % if else statements
-if_stmt(t_ifstmt(X, Y, Z)) --> [if], ['('], bool(X), [')'], ['{'], command(Y), ['}'], elif_stmt(Z).
+if_stmt(Env, t_ifstmt(X, Y, Z)) --> [if], ['('], bool(X), [')'], ['{'], command(Env, _, Y), ['}'], elif_stmt(Env, Z).
 
-elif_stmt(t_elifstmt(X, Y, Z)) --> [elif], ['('], bool(X), [')'], ['{'], command(Y), ['}'], elif_stmt(Z).
-elif_stmt(t_goto_else_stmt(X)) --> else_stmt(X).
+elif_stmt(Env, t_elifstmt(X, Y, Z)) --> [elif], ['('], bool(X), [')'], ['{'], command(Env, _, Y), ['}'], elif_stmt(Env, Z).
+elif_stmt(Env, t_goto_else_stmt(X)) --> else_stmt(Env, X).
 
-else_stmt(t_elsestmt(X)) --> [else], ['{'], command(X), ['}'].
-else_stmt(t_elsestmt()) --> [].
+else_stmt(Env, t_elsestmt(X)) --> [else], ['{'], command(Env, _, X), ['}'].
+else_stmt(_, t_elsestmt()) --> [].
 
 % for loops
-conventional_for(t_conventional_for(A,B,C,D,E,F)) --> [for], ['('], identifier(A), [=], expr(B), [;], 
+conventional_for(Env, t_conventional_for(A,B,C,D,E,F)) --> [for], ['('], identifier(A), [=], expr(B), [;], 
     identifier(A), comparison_operator(C), expr(D), [;], 
-    identifier(A), [=], expr(E), [')'], ['{'], command(F), ['}'].
+    identifier(A), [=], expr(E), [')'], ['{'], command(Env, _, F), ['}'].
 
-new_for(t_new_for(A,B,C,D)) --> [for], identifier(A), [in], 
-    [range], ['('], expr(B), [,], expr(C), [')'], ['{'], command(D), ['}'].
+new_for(Env, t_new_for(A,B,C,D)) --> [for], identifier(A), [in], 
+    [range], ['('], expr(B), [,], expr(C), [')'], ['{'], command(Env, _, D), ['}'].
 
 % General Statements and While loop
-statement(t_statement_declaration(X)) --> declaration(X).
-statement(t_statement_assign(X)) --> assignment(X).
-statement(t_statement_print(X)) --> [print], ['('] , printv(X), [')'].
-statement(t_statement_ifelse(X)) --> if_stmt(X).
-statement(t_statement_while(X, Y)) --> [while], ['('], bool(X), [')'], ['{'], command(Y), ['}'].
-statement(t_statement_for(X)) --> conventional_for(X).
-statement(t_statement_for(X)) --> new_for(X).
+statement(Env, FinalEnv, t_statement_declaration(X)) --> declaration(Env, FinalEnv, X).
+statement(Env, FinalEnv, t_statement_assign(X)) --> assignment(Env, FinalEnv, X).
+statement(Env, Env, t_statement_print(X)) --> [print], ['('] , printv(Env, X), [')'].
+statement(Env, Env, t_statement_ifelse(X)) --> if_stmt(Env, X).
+statement(Env, Env, t_statement_while(X, Y)) --> [while], ['('], bool(X), [')'], ['{'], command(Env, _, Y), ['}'].
+statement(Env, Env, t_statement_for(X)) --> conventional_for(Env, X).
+statement(Env, Env, t_statement_for(X)) --> new_for(Env, X).
 
 % Command List and single command is called statement.
-command(t_command(X, Y)) --> statement(X), command(Y).
-command(t_command()) --> [].
+command(Env, FinalEnv, t_command(X, Y)) --> statement(Env, Env1, X), command(Env1, FinalEnv, Y).
+command(Env, Env, t_command()) --> [].
 
 % Block.
-block(t_block(X))-->command(X).
+block(t_block(X))-->command([], _, X).
 
 % Program entr point. Will take input as list of tokens and generate parse tree.
 program(t_program(X))-->block(X).
