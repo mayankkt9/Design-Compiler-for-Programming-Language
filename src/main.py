@@ -2,6 +2,7 @@
 from pyswip import Prolog
 from Compiler.lexer import lexer
 import sys
+import os
 
 
 def create_parse_tree(lex):
@@ -66,16 +67,20 @@ if __name__ == "__main__":
     prolog = Prolog()
     file = get_arg()
     lex = lexer(file)
+    file_remove = file + "_rem"
     try:
         parse_tree = create_parse_tree(lex)
     except StopIteration:
         print("Syntax Error")
+        os.remove(file_remove) if os.path.exists(file_remove) else None
         sys.exit(0)
     try:
         give_semantics(parse_tree)
     except StopIteration:
         print("Semantics Error")
+        os.remove(file_remove) if os.path.exists(file_remove) else None
         sys.exit(0)
+    os.remove(file_remove) if os.path.exists(file_remove) else None
     
 
 
