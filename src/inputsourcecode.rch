@@ -1,15 +1,13 @@
-start
-    print("Start")
-    int x = 1
-    int y = 7
-    int z = 11
-    z = x + y + z
-    print(z)
-    z = x + y + 5
-    print(z)
-    int t = z * y - 6 + x 
-    print(t)
-    x = (x*y)/(x*y)
-    print(x)
-    print("End")
-end
+num x = 8
+num y = 5
+num z
+while ((x <= 10) and true and (y > 4)){
+    print("x = ", x, "\n")
+    x = x + 1
+    z = 10
+    while (z == 10){
+        print("inner loop")
+        z = z - 1
+    }
+}
+print("done")

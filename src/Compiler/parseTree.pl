@@ -28,13 +28,14 @@ boolean_operator(t_bool_op_and(and))  --> [and].
 boolean_operator(t_bool_op_or(or))  --> [or].
 
 % Boolean Operations
-bool(false)-->[false].
-bool(true)--> [true].
-bool(X) --> identifier(X).
-bool(t_notbool(not, X))--> [not], bool(X).
-bool(t_bool(X,Y,Z))--> expr(X), comparison_operator(Y), expr(Z).
-bool(t_bool_operation(X, Y, Z)) --> bool(X), boolean_operator(Y), bool(Z).
-bool(X) --> brkt_bool(X).
+bool(t_bool(X,Y,Z)) --> expr(X), comparison_operator(Y), expr(Z).
+bool(t_bool_operation(X,Y,Z)) --> bool(X), boolean_operator(Y), boolean(Z).
+bool(X) --> boolean(X).
+boolean(t_notbool(not, X)) --> [not], bool(X).
+boolean(X) --> identifier(X).
+boolean(true) --> [true].
+boolean(false) --> [false].
+boolean(X) --> brkt_bool(X).
 brkt_bool(X)-->['('], bool(X), [')'].
 
 % Need to redefine not equal to operator
