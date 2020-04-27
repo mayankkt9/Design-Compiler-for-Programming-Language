@@ -6,7 +6,7 @@ num i = 0
 num j = 0
 for i in range(x, y){
   for j in range(p , q){
-    if ((i+j==0) or (i+j==5) or (i+j==10)) {
+    if (i+j==0 or i+j==5 or i+j==10) {
       print("Sum divisible ")
       }
     else {

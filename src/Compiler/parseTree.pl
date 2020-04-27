@@ -79,13 +79,13 @@ assignment(Env, Env, t_assignment_bool(X, Y)) --> identifier(X), {lookup(X, bool
 assignment(Env, Env, t_assignment_str(X, Y)) --> identifier(X), {lookup(X, str, Env)},[=], ['"'], [Y], ['"'].
 
 
-% Need to implement print statement
-eprintv(_Env, t_print()) --> [].
-eprintv(Env, X) --> [,], printv(Env, X).
-printv(Env, t_print(X, Y)) --> [X], {string(X)}, eprintv(Env, Y).
-%printv(Env, t_print_expr(X, Y)) -->
-% print string and bool variables
-printv(Env, t_print_sb_id(X, Y)) --> identifier(X), eprintv(Env, Y).
+% Print statements
+print_lookup(X, Env, true):- lookup(X, str, Env); lookup(X, bool, Env).
+print_statement_list(_Env, t_print()) --> [].
+print_statement_list(Env, X) --> [,], print_statement(Env, X).
+print_statement(Env, t_print(X, Y)) --> [X], {string(X)}, print_statement_list(Env, Y).
+print_statement(Env, t_print_id(X, Y)) --> identifier(X), {print_lookup(X, Env, true)}, print_statement_list(Env, Y).
+print_statement(Env, t_print_expr(X, Y)) --> expr(X), {\+print_lookup(X, Env, true)}, print_statement_list(Env, Y).
 
 % if else statements
 if_stmt(Env, t_ifstmt(X, Y, Z)) --> [if], ['('], bool(X), [')'], ['{'], command(Env, _, Y), ['}'], elif_stmt(Env, Z).
@@ -107,7 +107,7 @@ new_for(Env, t_new_for(A,B,C,D)) --> [for], identifier(A), [in],
 % General Statements and While loop
 statement(Env, FinalEnv, t_statement_declaration(X)) --> declaration(Env, FinalEnv, X).
 statement(Env, FinalEnv, t_statement_assign(X)) --> assignment(Env, FinalEnv, X).
-statement(Env, Env, t_statement_print(X)) --> [print], ['('] , printv(Env, X), [')'].
+statement(Env, Env, t_statement_print(X)) --> [print], ['('] , print_statement(Env, X), [')'].
 statement(Env, Env, t_statement_ifelse(X)) --> if_stmt(Env, X).
 statement(Env, Env, t_statement_while(X, Y)) --> [while], ['('], bool(X), [')'], ['{'], command(Env, _, Y), ['}'].
 statement(Env, Env, t_statement_for(X)) --> conventional_for(Env, X).

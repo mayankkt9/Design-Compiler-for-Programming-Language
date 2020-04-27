@@ -3,6 +3,7 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 from functools import reduce
 from tokenize import tokenize, untokenize, NUMBER, STRING, NAME, OP
 from io import BytesIO
+import os
 
 def lexer(file):
     '''
@@ -44,4 +45,8 @@ def lexer(file):
     lex = lex[:-1]
     lex += ']'
     print(lex)
+    try
+        os.remove(file+"_rem")
+    except Exception:
+        pass
     return lex
