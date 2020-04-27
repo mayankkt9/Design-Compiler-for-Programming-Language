@@ -123,6 +123,20 @@ eval_ternary(t_ternary(X, _, Z), Env, FinalEnv, Val) :- eval_bool(X, Env, Env1, 
 
 
 
+% Evaluate String Manipulation
+eval_string_type(t_string_concat_id(X), Env, V):- lookup(X, Env, V, str).
+eval_string_type(t_string_concat_id(X), Env, _V):- \+check_present(X, Env), 
+    write("Variable not initialised. Please check."), nl, abort.
+eval_string_type(t_string_concat_id(X), Env, _V):- lookup(X, Env, _Val, Type), 
+    Type \= str, 
+    write("This operation can only be perfomed on string type of variable. Please check."), 
+    nl, abort.
+eval_string_type(t_string_concat_str(X), _Env, X).
+eval_string_concat(t_string_concat(X, Y), Env, Env, Val) :- eval_string_type(X, Env, V1), 
+    eval_string_type(Y, Env, V2), string_concat(V1, V2, Val).
+
+
+
 % Evaluate Declaration Statements
 eval_declaration(t_declaration_bool_assign(t_id(X),Y), Env, FinalEnv) :- 
     eval_bool(Y, Env, Env1, Val), update(X, Val, bool, Env1 , FinalEnv).
@@ -136,6 +150,10 @@ eval_declaration(t_declaration_str_assign(t_id(X),Y), Env, FinalEnv) :-
 eval_declaration(t_declaration_str_assign(t_id(X)), Env, FinalEnv) :- 
     update(X, "", str, Env , FinalEnv).
 
+eval_declaration(t_declaration_str_assign_concat(X, Y), Env, FinalEnv) :- 
+    eval_string_concat(Y, Env, Env1, Val),
+    update(X, Val, str, Env1, FinalEnv).
+
 eval_declaration(t_declaration_num_assign(t_id(X),Y), Env, FinalEnv) :- 
     eval_expr(Y, Env, Env1, Val), update(X, Val, num, Env1 , FinalEnv).
 
@@ -148,21 +166,30 @@ eval_declaration(t_declaration_num_assign(t_id(X)), Env, FinalEnv) :-
 
 
 % Evaluate assign statements
+/*
 eval_assignment(t_assignment_bool(t_id(X), _Y), Env, _FinalEnv) :- \+check_present(X, Env), 
     write("Variable not initialised. Please check."),nl, fail.
-
-eval_assignment(t_assignment_bool(t_id(X), Y), Env, FinalEnv) :- lookup(X, Env, _, bool), eval_bool(Y, Env, Env1, Val),
+*/
+eval_assignment(t_assignment_bool(t_id(X), Y), Env, FinalEnv) :- 
+    %lookup(X, Env, _, bool), 
+    eval_bool(Y, Env, Env1, Val),
     update(X, Val, bool, Env1, FinalEnv).
-
+/*
 eval_assignment(t_assignment_bool(t_id(X), _Y), Env, _FinalEnv) :- lookup(X, Env, _, Type), Type \= bool,
     write("Cannot assign this value to non boolean type of variable"),nl, fail.
 
 eval_assignment(t_assignment_str(t_id(X), _Y), Env, _FinalEnv) :- \+check_present(X, Env), 
     write("Variable not initialised. Please check."),nl, fail.
-
-eval_assignment(t_assignment_str(t_id(X), Y), Env, FinalEnv) :- lookup(X, Env, _, str), 
+*/
+eval_assignment(t_assignment_str(t_id(X), Y), Env, FinalEnv) :- 
+    %lookup(X, Env, _, str), 
     update(X, Y, str, Env, FinalEnv).
 
+eval_assignment(t_assignment_str_concat(X, Y), Env, FinalEnv) :- 
+    eval_string_concat(Y, Env, Env1, Val),
+    update(X, Val, str, Env1 , FinalEnv).
+
+/*
 eval_assignment(t_assignment_str(t_id(X), _Y), Env, _FinalEnv) :- lookup(X, Env, _, Type), 
 	Type \= str,
     write("Cannot assign this value to non string type of variable"),nl.
@@ -174,17 +201,17 @@ eval_assignment(t_assignment_num_assign(t_id(X), _Y), Env, _FinalEnv) :-
 eval_assignment(t_assignment_num_assign_ternary(t_id(X), _Y), Env, _FinalEnv) :- 
 	\+check_present(X, Env), 
     write("Variable not initialised. Please check."),nl, fail.
-
+*/
 eval_assignment(t_assignment_num_assign(t_id(X), Y), Env, FinalEnv) :- 
-	lookup(X, Env, _, num), 
+	%lookup(X, Env, _, num), 
     eval_expr(Y, Env, Env1, Val), 
 	update(X, Val, num, Env1, FinalEnv).
 
 eval_assignment(t_assignment_num_assign_ternary(t_id(X), Y), Env, FinalEnv) :- 
-	lookup(X, Env, _, num), 
+	%lookup(X, Env, _, num), 
     eval_ternary(Y, Env, Env1, Val), 
 	update(X, Val, num, Env1, FinalEnv).
-
+/*
 eval_assignment(t_assignment_num_assign(t_id(X), _Y), Env, _FinalEnv) :- 
 	lookup(X, Env, _, Type), 
 	Type \= num,
@@ -196,7 +223,7 @@ eval_assignment(t_assignment_num_assign_ternary(t_id(X), _Y), Env, _FinalEnv) :-
 	Type \= num,
     write("Cannot assign this value to non boolean type of variable"),nl, 
 	fail.
-
+*/
 
 
 % Print Statements
@@ -265,4 +292,4 @@ eval_command(t_command(X, Y), Env, FinalEnv) :- eval_statement(X, Env, Env1), ev
 % Evaluate Block
 eval_block(t_block(X), Env, FinalEnv):- eval_command(X, Env, FinalEnv).
 
-program_eval(t_program(X), Env):- eval_block(X, [], Env), !.
+program_eval(t_program(X), Env):- eval_block(X, [], Env).
