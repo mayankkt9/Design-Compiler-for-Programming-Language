@@ -1,7 +1,7 @@
 % Parse Tree Generator
 %:- use_rendering(svgtree).
 
-%:- use_module(library(tabling)).
+:- use_module(library(tabling)).
 :- table expr_op/3, term/3, bool/3.
 
 % Update Environment
@@ -106,10 +106,10 @@ else_stmt(_, t_elsestmt()) --> [].
 % for loops
 conventional_for(Env, t_conventional_for(A,B,C,D,E,F)) --> [for], ['('], identifier(A), [=], expr(B), [;],
     identifier(A), comparison_operator(C), expr(D), [;],
-    identifier(A), [=], expr(E), [')'], ['{'], command(Env, _, F), ['}'].
+    identifier(A), [=], expr(E), [')'], {update(A, num, Env, FinalEnv)}, ['{'], command(FinalEnv, _, F), ['}'].
 
 new_for(Env, t_new_for(A,B,C,D)) --> [for], identifier(A), [in],
-    [range], ['('], expr(B), [,], expr(C), [')'], ['{'], command(Env, _, D), ['}'].
+    [range], ['('], expr(B), [,], expr(C), [')'], {update(A, num, Env, FinalEnv)}, ['{'], command(FinalEnv, _, D), ['}'].
 
 % General Statements and While loop
 statement(Env, FinalEnv, t_statement_declaration(X)) --> declaration(Env, FinalEnv, X).
