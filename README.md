@@ -16,7 +16,7 @@ pip install -r requirements.txt
 ```
 * Run main.py present in src
 ``` 
-python3 main.py inputfile
+python main.py inputfile
 ``` 
 You can get input file from sample folder
 
