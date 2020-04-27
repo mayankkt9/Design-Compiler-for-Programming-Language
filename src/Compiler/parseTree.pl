@@ -1,7 +1,7 @@
 % Parse Tree Generator
 %:- use_rendering(svgtree).
 
-:- use_module(library(tabling)).
+%:- use_module(library(tabling)).
 :- table expr_op/3, term/3, bool/3.
 
 % Update Environment
@@ -13,7 +13,7 @@ updte(K, Type, [H|T], [H|R]) :- H \= (K,_), updte(K, Type, T, R).
 
 % Lookup Value in Environment
 lookup(t_id(K), Type, Env) :- look_up(K, Type, Env).
-look_up(_K, _Type, []) :- fail.
+look_up(K, _Type, []) :- write("Variable "), write(K), write(" not defined properly \n"), abort.
 look_up(K, Type, [(K,Type)|_T]).
 look_up(K1, Type, [(K2,_T2)|T]) :- K1 \= K2, look_up(K1, Type, T).
 
@@ -79,11 +79,11 @@ declaration(Env, FinalEnv, t_declaration_num_assign(X)) --> [num], identifier(X)
 declaration(Env, FinalEnv, t_declaration_num_assign_ternary(X, Y)) --> [num], identifier(X), [=], ternary_op(Y), {update(X, num, Env, FinalEnv)}.
 
 % Assignment statements
-assignment(Env, Env, t_assignment_num_assign(X, Y)) --> identifier(X), {lookup(X, num, Env)},[=], expr(Y).
-assignment(Env, Env, t_assignment_num_assign_ternary(X, Y)) --> identifier(X), {lookup(X, num, Env)}, [=], ternary_op(Y).
-assignment(Env, Env, t_assignment_bool(X, Y)) --> identifier(X), {lookup(X, bool, Env)}, [=], bool(Y).
-assignment(Env, Env, t_assignment_str(X, Y)) --> identifier(X), {lookup(X, str, Env)},[=], ['"'], [Y], ['"'].
-assignment(Env, Env, t_assignment_str_concat(X, Y)) --> identifier(X), {lookup(X, str, Env)}, [=], string_add(Y).
+assignment(Env, Env, t_assignment_num_assign(X, Y)) --> identifier(X), [=], expr(Y), {lookup(X, num, Env)}.
+assignment(Env, Env, t_assignment_num_assign_ternary(X, Y)) --> identifier(X), [=], ternary_op(Y) , {lookup(X, num, Env)}.
+assignment(Env, Env, t_assignment_bool(X, Y)) --> identifier(X), [=], bool(Y), {lookup(X, bool, Env)}.
+assignment(Env, Env, t_assignment_str(X, Y)) --> identifier(X), [=], [Y], {string(Y)}, {lookup(X, str, Env)}.
+assignment(Env, Env, t_assignment_str_concat(X, Y)) --> identifier(X), [=], string_add(Y), {lookup(X, str, Env)}.
 
 
 % Print statements
