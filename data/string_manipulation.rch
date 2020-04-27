@@ -1,0 +1,10 @@
+string a = "abc"
+string b = "def"
+
+string c = a + "oio"
+print(c, "\n")
+string d
+d = a + b
+print(d, "\n")
+d = b + "xyz"
+print(d, "\n")
