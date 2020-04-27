@@ -10,6 +10,10 @@
 export PATH=$PATH:/Applications/SWI-Prolog.app/Contents/swipl/bin/x86_64-darwin15.6.0
 export DYLD_FALLBACK_LIBRARY_PATH=/Applications/SWI-Prolog.app/Contents/swipl/lib/x86_64-darwin15.6.0
 ``` 
+* Make sure pip and python are installed on your mac and then run
+```
+pip install -r requirements.txt
+```
 * Run main.py present in src
 ``` 
 python3 main.py inputfile
