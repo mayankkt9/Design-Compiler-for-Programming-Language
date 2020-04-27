@@ -1,0 +1,11 @@
+num a = 8
+num b = 4
+boolean c
+while(not c and b == a / 2) {
+    b = 2
+}
+print(b, "\n")
+while(c or a != b * 2) {
+    a = 4
+}
+print(a, "\n")

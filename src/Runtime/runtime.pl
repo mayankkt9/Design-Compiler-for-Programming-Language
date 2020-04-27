@@ -27,10 +27,10 @@ eval_expr(t_assign(t_id(X), Y), Env, FinalEnv, Val):- check_present(X, Env),
     eval_expr(Y, Env, Env1, Val), update(X, Val, num, Env1, FinalEnv).
 
 eval_expr(t_assign(t_id(X), _Y), Env, _FinalEnv, _Val):- \+check_present(X, Env),
-    write("Variable not initialised. Please check."),nl, fail.
+    write("Variable not initialised. Please check."),nl, abort.
 
 eval_expr(t_assign(t_id(X), _Y), Env, _FinalEnv, _Val):- lookup(X, Env, _, Type),
-    Type \= num, write("This operation can only be perfomed on num type of variable. Please check."),nl, fail.
+    Type \= num, write("This operation can only be perfomed on num type of variable. Please check."),nl, abort.
 
 eval_expr(t_add(X, Y), Env, FinalEnv, Val):- eval_expr(X, Env, Env1, V1),
                                              eval_expr(Y, Env1, FinalEnv, V2),
@@ -52,10 +52,10 @@ eval_expr(t_num(X), Env, Env, X).
 
 eval_expr(t_id(X), Env, Env, Val):- check_present(X, Env), lookup(X, Env, Val, num).
 
-eval_expr(t_id(X), Env, Env, _Val):- \+check_present(X, Env), write("Variable not initialised. Please check."),nl, fail.
+eval_expr(t_id(X), Env, Env, _Val):- \+check_present(X, Env), write("Variable not initialised. Please check."),nl, abort.
 
 eval_expr(t_id(X), Env, Env, Val):- lookup(X, Env, Val, Type), Type \= num,
-    write("This operation can only be perfomed on num type of variable. Please check."),nl, fail.
+    write("This operation can only be perfomed on num type of variable. Please check."),nl, abort.
 
 
 
@@ -67,10 +67,10 @@ eval_bool(false, Env, Env, false).
 eval_bool(true, Env, Env, true).
 eval_bool(t_id(X), Env, Env, Val) :- check_present(X, Env), lookup(X, Env, Val, bool).
 eval_bool(t_id(X), Env, Env, Val):- lookup(X, Env, Val, Type), Type \= bool,
-    write("This operation can only be perfomed on boolean type of variable. Please check."), nl, fail.
+    write("This operation can only be perfomed on boolean type of variable. Please check."), nl, abort.
 
 eval_bool(t_id(X), Env, Env, _Val):- \+check_present(X, Env), write("Variable not initialised. Please check."), 
-    nl, fail.
+    nl, abort.
 
 eval_bool(t_notbool(not, X), Env, FinalEnv, Val) :- eval_bool(X, Env, FinalEnv, V1), not(V1, Val).
 
@@ -232,19 +232,14 @@ eval_while(t_statement_while(X,_), Env, FinalEnv):- eval_bool(X, Env, FinalEnv, 
 eval_for_loop(t_new_for(A,B,C,D), Env, FinalEnv) :- 
     eval_for_loop(t_conventional_for(A,B,t_comp_op(<),C, t_assign(A, t_add(A, t_num(1))),D), Env, FinalEnv).
 
-eval_for_loop(t_conventional_for(A,_B,_C,_D,_E,_F), Env, _FinalEnv) :- \+check_present(A, Env), 
-    write("Variable not initialised. Please check."),nl, fail.
-
 eval_for_loop(t_conventional_for(A,B,C,D,E,F), Env, FinalEnv) :- eval_expr(B, Env, Env1, Val), 
-    lookup(A, Env1, _, Type), 
-	update(A, Val, Type, Env1, Env2), 
+	update(A, Val, num, Env1, Env2), 
     eval_for_statement(t_conventional_for(A,B,C,D,E,F), Env2, FinalEnv).
 
 eval_for_statement(t_conventional_for(A,B,C,D,E,F), Env, FinalEnv) :- eval_bool(t_bool(A, C, D), Env, Env1, true), 
     eval_command(F, Env1, Env2), 
 	eval_expr(E, Env2, Env3, Val), 
-	lookup(A, Env1, _, Type),
-    update(A, Val, Type, Env3, Env4), 
+    update(A, Val, num, Env3, Env4), 
 	eval_for_statement(t_conventional_for(A,B,C,D,E,F), Env4, FinalEnv).
 
 eval_for_statement(t_conventional_for(A,_,C,D,_,_), Env, Env) :- eval_bool(t_bool(A, C, D), Env, _, false).

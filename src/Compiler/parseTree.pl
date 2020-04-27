@@ -45,7 +45,7 @@ boolean_operator(t_bool_op_or(or))  --> [or].
 bool(t_bool_operation(X,Y,Z)) --> bool(X), boolean_operator(Y), boolean(Z).
 bool(X) --> boolean(X).
 boolean(t_bool(X,Y,Z)) --> expr(X), comparison_operator(Y), expr(Z).
-boolean(t_notbool(not, X)) --> [not], bool(X).
+boolean(t_notbool(not, X)) --> [not], boolean(X).
 boolean(X) --> identifier(X).
 boolean(true) --> [true].
 boolean(false) --> [false].

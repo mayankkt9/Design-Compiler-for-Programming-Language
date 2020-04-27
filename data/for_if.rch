@@ -1,0 +1,14 @@
+num a = 9
+num b = 7
+boolean c
+boolean d = false
+
+if(not(a != b and c)) {
+    print(a)
+}
+elif(a == b or c and d) {
+    print(d)
+}
+else {
+    print("none")
+}
