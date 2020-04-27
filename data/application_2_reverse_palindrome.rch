@@ -1,0 +1,30 @@
+# Application program to reverse a number and check if it is palindrom or not
+
+num n = 45654
+num actual_number = n
+num i = 0
+num j = 0
+num form_reverse = 0
+while(n>0){
+	
+	num number = n
+	num divisor = 10
+	num iter = 1
+	num product = 0
+	while(product<=number){
+		product = divisor * iter
+		iter = iter + 1
+	}
+	num remainder_mod = number - (product - divisor)
+
+	num form_reverse = form_reverse*10+remainder_mod
+
+	n=(n-remainder_mod)/10
+}
+print("Actual Number is ",actual_number,"\n")
+print("Reverse Number is ",form_reverse,"\n")
+if(actual_number==form_reverse){
+	print("Yes!! It is palindrome \n")
+}else{
+	print("No its not a palindrome \n")
+}

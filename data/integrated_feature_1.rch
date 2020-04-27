@@ -1,0 +1,28 @@
+# Program to check various things integrated that is nested for loop, double values to output, complex expression and some boolean expression
+num i = 0
+num j = 0
+num k = 10
+num start = 10
+num end = 20
+num begin = 25
+num last = 30
+for(i=1;i<=5;i=i+1){
+	for j in range(start,end){
+		print(j," ")
+		for(k=begin;k<=last;k=k+1){
+			num calc = i*j
+			num calc_row = k+begin*start-last/k
+			num calc_col = (i+j)/2 + (k*start) + (last/begin)
+			print(calc," ",calc_row," ",calc_col," ")
+			print(k," ")
+		}
+		print("\n")
+		if(calc>20){
+			print("Greater \n")
+			if(i==5 and true){
+				print("Strong Path \n")
+			}
+		}
+	}
+	print("\n")
+}

@@ -1,0 +1,27 @@
+# Application program to print all prime numbers from 1 to 100 
+
+num n = 100
+num i = 0
+num j = 0
+print("Print all prime number \n")
+for(i=2;i<=100;i=i+1){
+	num count = 0
+	for(j=2;j<=i;j=j+1){
+		num number = i
+		num divisor = j
+		num iter = 1
+		num product = 0
+		while(product<=number){
+			product = divisor * iter
+			iter = iter + 1
+		}
+		num remainder_mod = number - (product - divisor)
+		if(remainder_mod==0){
+			count=count+1
+		}
+	}
+	if(count==1){
+		print(i," ")
+	}
+}
+print("\n")

@@ -1,0 +1,92 @@
+# Rigorous Boolean Checking
+# Checking Semantics of each value
+
+boolean true_val = true
+boolean false_val = false
+boolean a = true
+boolean b = false
+boolean aAa = true
+
+num var1 = 1
+num var2 = 2
+num var3 = 3
+num var4 = 4
+num var5 = 5
+num var6 = 6
+num var7 = 7
+num var8 = 8
+num var9 = 9
+num var0 = 0
+
+# and operator Validation
+boolean variable1 = true_val and true_val
+boolean variable2 = true_val and false_val
+boolean variable3 = false_val and true_val
+boolean variable4 = false_val and false_val
+
+print(variable1,"\n")
+print(variable2,"\n")
+print(variable3,"\n")
+print(variable4,"\n")
+
+# or operator Validation
+boolean variable5 = true_val or true_val
+boolean variable6 = true_val or false_val
+boolean variable7 = false_val or true_val
+boolean variable8 = false_val or false_val
+
+print(variable5,"\n")
+print(variable6,"\n")
+print(variable7,"\n")
+print(variable8,"\n")
+
+# not operator Validation
+boolean variable9 = not true_val
+boolean variable10 = not false_val
+
+print(variable9,"\n")
+print(variable10,"\n")
+
+# nand operation Validation
+boolean operation_nand_1 = not(true_val and true_val)
+boolean operation_nand_2 = not(true_val and false_val)
+boolean operation_nand_3 = not(false_val and true_val)
+boolean operation_nand_4 = not(false_val and false_val)
+
+print(operation_nand_1,"\n")
+print(operation_nand_2,"\n")
+print(operation_nand_3,"\n")
+print(operation_nand_4,"\n")
+
+# xor operation Validation
+boolean operation_xor_1 = (not(a and b)) and (not(not a and not b))
+
+print(operation_xor_1,"\n")
+
+# Boolean operation in ifelse
+
+if(var1*2+var2==4 and var3==3){
+	print("YES1\n")
+}
+
+if(var3*var3==var9 or var4==4 ){
+	if(var5==5 and var7==6){
+		print("DONT\n")
+	}elif(var7==8){
+		print("DONT\n")
+	}else{
+		print("YES2\n")
+	}
+}
+
+# Boolean operation in while
+
+num var_wh = 10
+while(not(var_wh==0) and var_wh!=4){
+	print(var_wh," ")
+	var_wh=var_wh-1
+}
+print("\n")
+
+
+
