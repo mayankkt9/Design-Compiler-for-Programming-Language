@@ -40,7 +40,8 @@ def give_semantics(parse_tree):
     prolog.consult("Runtime/runtime.pl")
     query = "program_eval({},Z)"
     Env = prolog.query(query.format(parse_tree))
-    print(next(Env)["Z"])
+    environment = next(Env)["Z"]
+    # print(environment)
 
 
 def get_arg():
@@ -85,23 +86,24 @@ if __name__ == "__main__":
 
 
 
-    # # Delete this code if not testing all the files
-    # prolog = Prolog()
-    # # file = get_arg()
-    # import os
-    # for root, dirs, files in os.walk("..\data", topdown=False):
-    #     print(files)
-    #     for name in files:
-    #         file_name = os.path.join(root, name)
-    #         try:
-    #             lex = lexer(file_name)
-    #             # try:
-    #             parse_tree = create_parse_tree(lex)
-    #             # except StopIteration:
-    #             #     print("Syntax Error")
-    #             #     sys.exit(0)
-    #             give_semantics(parse_tree)
-    #         except Exception:
-    #             print("-----------------------------File {} failed---------------------------------".format(file_name))
-    #         else:
-    #             print("-----------------------------File {} passed---------------------------------".format(file_name))
+    # Delete this code if not testing all the files
+    prolog = Prolog()
+    # file = get_arg()
+    import os
+    for root, dirs, files in os.walk("..\data", topdown=False):
+        print(files)
+        for name in files:
+            file_name = os.path.join(root, name)
+            try:
+                lex = lexer(file_name)
+                # try:
+                parse_tree = create_parse_tree(lex)
+                # except StopIteration:
+                #     print("Syntax Error")
+                #     sys.exit(0)
+                give_semantics(parse_tree)
+            except Exception:
+                print("-----------------------------File {} failed---------------------------------".format(file_name))
+            else:
+                print("-----------------------------File {} passed---------------------------------".format(file_name))
+            os.remove(file_remove) if os.path.exists(file_remove) else None
