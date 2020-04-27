@@ -1,5 +1,14 @@
 ## 🎈 Rancho Programming Language
 
+## ⚙  How to run your program
+------------------
+``` 
+python3 main.py <inputfile>
+Example 
+python3 main.py sourcecode.rch
+``` 
+
+
 ## ⚙  How to Install it on (MAC)
 ------------------
 
@@ -21,10 +30,8 @@ python main.py inputfile
 You can get input file from sample folder
 
 
-## ⚙  How to run your program
+## ⚙  Tools Used
 ------------------
-``` 
-python3 main.py <inputfile>
-Example 
-python3 main.py sourcecode.rch
-``` 
+* SWI-Prolog Desktop Application ([Link 🚀](https://www.swi-prolog.org/download/stable/)) 
+* Python Libraries Used - pyswip, tokenize
+
