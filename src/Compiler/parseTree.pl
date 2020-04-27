@@ -63,11 +63,17 @@ comparison_operator(t_comp_op(=\=)) --> ["!="].
 % Ternary Operation
 ternary_op(t_ternary(X, Y, Z)) --> bool(X), [?], expr(Y), [:], expr(Z).
 
+% String Manipulation
+string_type(t_string_concat_id(X)) --> identifier(X).
+string_type(t_string_concat_str(X)) --> [X], {string(X)}.
+string_add(t_string_concat(X, Y)) --> string_type(X), [+], string_type(Y).
+
 % Declaration statements
 declaration(Env, FinalEnv, t_declaration_bool_assign(X, Y)) --> [boolean], identifier(X), [=], bool(Y), {update(X, bool, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_bool_assign(X)) --> [boolean], identifier(X), {update(X, bool, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_str_assign(X, Y)) --> [string], identifier(X), [=], [Y], {string(Y)}, {update(X, str, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_str_assign(X)) --> [string], identifier(X),{update(X, str, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_str_assign_concat(X, Y)) --> [string], identifier(X), [=], string_add(Y), {update(X, str, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_num_assign(X, Y)) --> [num], identifier(X), [=], expr(Y), {update(X, num, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_num_assign(X)) --> [num], identifier(X), {update(X, num, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_num_assign_ternary(X, Y)) --> [num], identifier(X), [=], ternary_op(Y), {update(X, num, Env, FinalEnv)}.
@@ -77,6 +83,7 @@ assignment(Env, Env, t_assignment_num_assign(X, Y)) --> identifier(X), {lookup(X
 assignment(Env, Env, t_assignment_num_assign_ternary(X, Y)) --> identifier(X), {lookup(X, num, Env)}, [=], ternary_op(Y).
 assignment(Env, Env, t_assignment_bool(X, Y)) --> identifier(X), {lookup(X, bool, Env)}, [=], bool(Y).
 assignment(Env, Env, t_assignment_str(X, Y)) --> identifier(X), {lookup(X, str, Env)},[=], ['"'], [Y], ['"'].
+assignment(Env, Env, t_assignment_str_concat(X, Y)) --> identifier(X), {lookup(X, str, Env)}, [=], string_add(Y).
 
 
 % Print statements
@@ -97,11 +104,11 @@ else_stmt(Env, t_elsestmt(X)) --> [else], ['{'], command(Env, _, X), ['}'].
 else_stmt(_, t_elsestmt()) --> [].
 
 % for loops
-conventional_for(Env, t_conventional_for(A,B,C,D,E,F)) --> [for], ['('], identifier(A), [=], expr(B), [;], 
-    identifier(A), comparison_operator(C), expr(D), [;], 
+conventional_for(Env, t_conventional_for(A,B,C,D,E,F)) --> [for], ['('], identifier(A), [=], expr(B), [;],
+    identifier(A), comparison_operator(C), expr(D), [;],
     identifier(A), [=], expr(E), [')'], ['{'], command(Env, _, F), ['}'].
 
-new_for(Env, t_new_for(A,B,C,D)) --> [for], identifier(A), [in], 
+new_for(Env, t_new_for(A,B,C,D)) --> [for], identifier(A), [in],
     [range], ['('], expr(B), [,], expr(C), [')'], ['{'], command(Env, _, D), ['}'].
 
 % General Statements and While loop
