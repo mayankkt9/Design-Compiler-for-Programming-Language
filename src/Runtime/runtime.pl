@@ -324,24 +324,17 @@ form_method_env(t_formal_parameter(X, Y), t_actual_parameter(A, B), Env, NewEnv,
     form_method_env(Y, B, Env, NewEnv1, NewFinalEnv).
 
 % Evaluate body of method
-eval_body(t_body(X), Env, FinalEnv) :- eval_command(X, Env, FinalEnv).
-
-% Return Statement Evaluation
-eval_return_statement(t_return(), _Val, _Env).
-eval_return_statement(t_return(t_str(X)), X, _Env).
-eval_return_statement(t_return(X), Val, Type, Env):- lookup(X, Env, Val, Type).
-eval_return_statement(t_return(X), Val, num, Env):- eval_expr(X, Env, _FinalEnv, Val).
+eval_body(t_body(X), Env) :- eval_command(X, Env, _FinalEnv).
 
 % Method Declaration evaluation
-eval_method(t_method_declaration(FuncName, Parameters, Body, ReturnType), Env, FinalEnv, _Val, _Type) :- 
-    update(FuncName, (Parameters, Body, ReturnType), method, Env, FinalEnv).
+eval_method(t_method_declaration(FuncName, Parameters, Body), Env, FinalEnv) :- 
+    update(FuncName, (Parameters, Body), method, Env, FinalEnv).
 
 % Method Call evaluation
-eval_method(t_method_call(MethodName, ActualParameters), Env, Env, Val, Type) :- 
-    lookup(MethodName, Env, (FormalParameters, Body, ReturnType), method),
+eval_method(t_method_call(MethodName, ActualParameters), Env, Env) :- 
+    lookup(MethodName, Env, (FormalParameters, Body), method),
     form_method_env(FormalParameters, ActualParameters, Env, [], FinalMethodEnv),
-    eval_body(Body, FinalMethodEnv, ResultingEnv), 
-    eval_return_statement(ReturnType, Val, Type, ResultingEnv).
+    eval_body(Body, FinalMethodEnv).
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -355,7 +348,7 @@ eval_statement(t_statement_for(X), Env, FinalEnv) :- eval_for_loop(X, Env, Final
 eval_statement(t_statement_stack(X), Env, FinalEnv) :- eval_stack(X, Env, FinalEnv).
 eval_statement(t_statement_queue(X), Env, FinalEnv) :- eval_queue(X, Env, FinalEnv).
 eval_statement(t_statement_list(X), Env, FinalEnv) :- eval_list(X, Env, FinalEnv).
-eval_statement(t_statement_method(X), Env, FinalEnv) :- eval_method(X, Env, FinalEnv, _Val, _Type).
+eval_statement(t_statement_method(X), Env, FinalEnv) :- eval_method(X, Env, FinalEnv).
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------
 
