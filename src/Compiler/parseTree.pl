@@ -86,6 +86,7 @@ declaration(Env, FinalEnv, t_declaration_stack_assign(X)) --> [stack], identifie
 declaration(Env, FinalEnv, t_declaration_stack_assign(X, Y)) --> [stack], identifier(X), [=], [Y], {is_list(Y)}, {update(X, stack, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_queue_assign(X)) --> [queue], identifier(X), {update(X, queue, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_queue_assign(X, Y)) --> [queue], identifier(X), [=], [Y], {is_list(Y)}, {update(X, queue, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_list_assign(X, Y)) --> [list], identifier(X), [=], [Y], {is_list(Y)}, {update(X, list, Env, FinalEnv)}.
 
 % Assignment statements
 assignment(Env, Env, t_assignment_num_assign(X, Y)) --> identifier(X), [=], expr(Y), {lookup(X, num, Env)}.
@@ -95,6 +96,7 @@ assignment(Env, Env, t_assignment_str(X, Y)) --> identifier(X), [=], [Y], {strin
 assignment(Env, Env, t_assignment_str_concat(X, Y)) --> identifier(X), [=], string_add(Y), {lookup(X, str, Env)}.
 assignment(Env, Env, t_assignment_stack(X, Y)) --> identifier(X), [=], [Y], {is_list(Y)}, {lookup(X, stack, Env)}.
 assignment(Env, Env, t_assignment_queue(X, Y)) --> identifier(X), [=], [Y], {is_list(Y)}, {lookup(X, queue, Env)}.
+assignment(Env, Env, t_assignment_list(X, Y)) --> identifier(X), [=], [Y], {is_list(Y)}, {lookup(X, list, Env)}.
 
 % Print statements
 print_lookup(X, Env, true):- lookup(X, str, Env); lookup(X, bool, Env).
@@ -131,6 +133,12 @@ queue_op(Env, t_push(X, Y)) --> identifier(X), [.] , [push], ['('], expr(Y) , ['
 queue_op(Env, t_poll(X)) --> identifier(X), [.], [poll], ['('], [')'], {lookup(X, queue, Env)}.
 queue_op(Env, t_top(X)) --> identifier(X), [.], [top], ['('],[')'], {lookup(X, queue, Env)}.
 
+% list operations
+% queue operations
+list_op(Env, t_add(X, Y)) --> identifier(X), [.] , [add], ['('], expr(Y) , [')'], {lookup(X, list, Env)}.
+list_op(Env, t_add(X, Y, Z)) --> identifier(X), [.] , [add], ['('], expr(Y) , expr(Z), [')'], {lookup(X, list, Env)}.
+list_op(Env, t_remove(X, Y)) --> identifier(X), [.], [remove], ['('], expr(Y), [')'], {lookup(X, list, Env)}.
+list_op(Env, t_get(X, Y)) --> identifier(X), [.], [get], ['('], expr(Y) , [')'], {lookup(X, list, Env)}.
 
 % Method Declaration
 formal_parameter_list(Env, FinalEnv, X) --> [,], get_formal_parameters(Env, FinalEnv, X).
@@ -172,6 +180,7 @@ statement(Env, Env, t_statement_for(X)) --> conventional_for(Env, X).
 statement(Env, Env, t_statement_for(X)) --> new_for(Env, X).
 statement(Env, Env, t_statement_stack(X)) --> stack_op(Env, X).
 statement(Env, Env, t_statement_queue(X)) --> queue_op(Env, X).
+statement(Env, Env, t_statement_list(X)) --> list_op(Env, X).
 
 % Command List and single command is called statement.
 command(Env, FinalEnv, t_command(X, Y)) --> statement(Env, Env1, X), command(Env1, FinalEnv, Y).
