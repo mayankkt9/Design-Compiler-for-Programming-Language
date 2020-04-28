@@ -4,6 +4,11 @@
 :- use_module(library(tabling)).
 :- table expr_op/3, term/3, bool/3.
 
+
+% Reserved Keywords in language
+reserved_keywords([num, true, false, print, bool, str, while, for, def, in, not, and, in, if, else, elif, stack, queue, '(',')','{','}']).
+check_reserved_keywords(X):- reserved_keywords(L), \+ member(X, L).
+
 % Update Environment
 update(t_id(K), Type, Env, FinalEnv) :- updte(K, Type, Env, FinalEnv).
 updte(K, Type, [], [(K,Type)]).
@@ -34,7 +39,7 @@ brackets(X) --> ['('], expr(X), [')'].
 brackets(X) --> num(X).
 brackets(X) --> identifier(X).
 
-identifier(t_id(X)) -->[X],{X \= true}, {X \= false}, {atom(X)}.
+identifier(t_id(X)) -->[X], {check_reserved_keywords(X)}, {atom(X)}.
 num(t_num(X)) --> [X], {number(X)}.
 
 % Boolean Operators
@@ -126,7 +131,38 @@ queue_op(Env, t_push(X, Y)) --> identifier(X), [.] , [push], ['('], expr(Y) , ['
 queue_op(Env, t_poll(X)) --> identifier(X), [.], [poll], ['('], [')'], {lookup(X, queue, Env)}.
 queue_op(Env, t_top(X)) --> identifier(X), [.], [top], ['('],[')'], {lookup(X, queue, Env)}.
 
-% General Statements and While loop
+
+% Method Declaration
+formal_parameter_list(Env, FinalEnv, X) --> [,], get_formal_parameters(Env, FinalEnv, X).
+formal_parameter_list(Env, Env, t_formal_parameter()) --> [].
+get_formal_parameters(Env, FinalEnv, t_formal_parameter(X, Y)) --> identifier(X), {update(X, unknown, Env, Env1)}, formal_parameter_list(Env1, FinalEnv, Y).
+get_formal_parameters(Env, Env, t_formal_parameter()) --> [].
+
+get_body(Env, t_body(X)) --> command(Env, _FinalEnv, X).
+
+method_dec(Env, FinalEnv, t_method_declaration(X, Y, Z)) --> [def], identifier(X),
+    ['('],get_formal_parameters([], Env1, Y),[')'],
+    ['{'],get_body(Env1, Z),['}'],
+    {update(X, method, Env, FinalEnv)}.
+
+
+% Method Call
+actual_parameter_list(Env, X) --> [,], get_actual_parameters(Env, X).
+actual_parameter_list(_Env, t_actual_parameter()) --> [].
+
+get_actual_parameters(Env, t_actual_parameter(X, Y)) --> identifier(X), {lookup(X, _, Env)}, actual_parameter_list(Env, Y).
+get_actual_parameters(Env, t_actual_parameter(t_str(X), Y)) --> [X], {string(X)}, actual_parameter_list(Env, Y).
+get_actual_parameters(Env, t_actual_parameter(t_num(X), Y)) --> [X], {number(X)}, actual_parameter_list(Env, Y).
+get_actual_parameters(_Env, t_actual_parameter()) --> [].
+
+method_call(Env, t_method_call(X, Y)) --> identifier(X), ['('], get_actual_parameters(Env, Y), [')'], {lookup(X, method, Env)}.
+
+% Methods
+method(Env, FinalEnv, X) --> method_dec(Env, FinalEnv, X).
+method(Env, Env, X) --> method_call(Env, X).
+
+% Statements
+statement(Env, FinalEnv, t_statement_method(X)) --> method(Env, FinalEnv, X).
 statement(Env, FinalEnv, t_statement_declaration(X)) --> declaration(Env, FinalEnv, X).
 statement(Env, FinalEnv, t_statement_assign(X)) --> assignment(Env, FinalEnv, X).
 statement(Env, Env, t_statement_print(X)) --> [print], ['('] , print_statement(Env, X), [')'].
@@ -144,5 +180,5 @@ command(Env, Env, t_command()) --> [].
 % Block.
 block(t_block(X))-->command([], _, X).
 
-% Program entr point. Will take input as list of tokens and generate parse tree.
+% Program entery point. Will take input as list of tokens and generate parse tree.
 program(t_program(X))-->block(X).
