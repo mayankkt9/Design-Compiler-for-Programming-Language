@@ -286,6 +286,9 @@ eval_for_statement(t_conventional_for(A,B,C,D,E,F), Env, FinalEnv) :- eval_bool(
 
 eval_for_statement(t_conventional_for(A,_,C,D,_,_), Env, Env) :- eval_bool(t_bool(A, C, D), Env, _, false).
 
+
+
+
 % Evaluate stack commands
 eval_stack(t_push(X, t_num(Y)), Env, FinalEnv) :- lookup(X, Env, Val, stack), update(X, [Y|Val], stack, Env, FinalEnv).
 eval_stack(t_pop(X), Env, FinalEnv) :- lookup(X, Env, [_|Rest], stack), update(X, Rest, stack, Env, FinalEnv).
@@ -294,12 +297,44 @@ eval_stack(t_top(X), Env, Env) :- lookup(X, Env, [Top|_], stack), write(Top).
 eval_stack(t_top(t_id(X)), Env, Env) :- lookup(X, Env, [], stack), write("Stack "), write(X), write(" is empty.").
 
 
+
+
 % Evaluate queue commands
 eval_queue(t_push(X, t_num(Y)), Env, FinalEnv) :- lookup(X, Env, Val, queue), append(Val, [Y], FinalVal), update(X, FinalVal, queue, Env, FinalEnv).
 eval_queue(t_poll(X), Env, FinalEnv) :- lookup(X, Env, [_|Rest], queue), update(X, Rest, queue, Env, FinalEnv).
 eval_queue(t_poll(t_id(X)), Env, Env) :- lookup(X, Env, [], queue), write("Queue "), write(X), write(" is empty.").
 eval_queue(t_top(X), Env, Env) :- lookup(X, Env, [Top|_], queue), write(Top).
 eval_queue(t_top(t_id(X)), Env, Env) :- lookup(X, Env, [], queue), write("Queue "), write(X), write(" is empty.").
+
+
+
+% Method
+find_val(A, Val, Type, Env):- lookup(A, Env, Val, Type).
+find_val(t_str(A), A, _Type, _Env).
+find_val(t_num(A), A, _Type, _Env).    
+
+% Create a local environment for method
+form_method_env(t_formal_parameter(), t_actual_parameter(), _Env, NewEnv, NewEnv).
+form_method_env(t_formal_parameter(X, Y), t_actual_parameter(A, B), Env, NewEnv, NewFinalEnv) :- 
+    find_val(A, Val, Type, Env),
+    update(X, Val, Type, NewEnv, NewEnv1),
+    form_method_env(Y, B, Env, NewEnv1, NewFinalEnv).
+
+% Evaluate body of method
+eval_body(t_body(X), Env) :- eval_command(X, Env, _FinalEnv).
+
+% Method Declaration evaluation
+eval_method(t_method_declaration(FuncName, Parameters, Body), Env, FinalEnv) :- 
+    update(FuncName, (Parameters, Body), method, Env, FinalEnv).
+
+
+% Method Call evaluation
+eval_method(t_method_call(MethodName, ActualParameters), Env, Env) :- 
+    lookup(MethodName, Env, (FormalParameters, Body), method),
+    form_method_env(FormalParameters, ActualParameters, Env, [], FinalMethodEnv),
+    eval_body(Body, FinalMethodEnv).
+
+
 
 
 % Evaluate Statements
@@ -311,6 +346,7 @@ eval_statement(t_statement_while(X, Y), Env, FinalEnv) :- eval_while(t_statement
 eval_statement(t_statement_for(X), Env, FinalEnv) :- eval_for_loop(X, Env, FinalEnv).
 eval_statement(t_statement_stack(X), Env, FinalEnv) :- eval_stack(X, Env, FinalEnv).
 eval_statement(t_statement_queue(X), Env, FinalEnv) :- eval_queue(X, Env, FinalEnv).
+eval_statement(t_statement_method(X), Env, FinalEnv) :- eval_method(X, Env, FinalEnv).
 
 
 
