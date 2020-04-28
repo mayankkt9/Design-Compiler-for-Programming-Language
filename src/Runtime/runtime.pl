@@ -167,6 +167,12 @@ eval_declaration(t_declaration_stack_assign(t_id(X)), Env, FinalEnv) :-
 eval_declaration(t_declaration_stack_assign(t_id(X), Y), Env, FinalEnv) :- 
     update(X, Y, stack, Env, FinalEnv).
 
+eval_declaration(t_declaration_queue_assign(t_id(X)), Env, FinalEnv) :- 
+    update(X, [], queue, Env, FinalEnv).
+
+eval_declaration(t_declaration_queue_assign(t_id(X), Y), Env, FinalEnv) :- 
+    update(X, Y, queue, Env, FinalEnv).
+
 
 % Evaluate assign statements
 /*
@@ -231,6 +237,9 @@ eval_assignment(t_assignment_num_assign_ternary(t_id(X), _Y), Env, _FinalEnv) :-
 eval_assignment(t_assignment_stack(t_id(X), Y), Env, FinalEnv) :- 
 	update(X, Y, stack, Env, FinalEnv).
 
+eval_assignment(t_assignment_queue(t_id(X), Y), Env, FinalEnv) :- 
+	update(X, Y, queue, Env, FinalEnv).
+
 
 % Print Statements
 eval_print(t_print(), Env, Env).
@@ -285,6 +294,14 @@ eval_stack(t_top(X), Env, Env) :- lookup(X, Env, [Top|_], stack), write(Top).
 eval_stack(t_top(t_id(X)), Env, Env) :- lookup(X, Env, [], stack), write("Stack "), write(X), write(" is empty.").
 
 
+% Evaluate queue commands
+eval_queue(t_push(X, t_num(Y)), Env, FinalEnv) :- lookup(X, Env, Val, queue), append(Val, [Y], FinalVal), update(X, FinalVal, queue, Env, FinalEnv).
+eval_queue(t_poll(X), Env, FinalEnv) :- lookup(X, Env, [_|Rest], queue), update(X, Rest, queue, Env, FinalEnv).
+eval_queue(t_poll(t_id(X)), Env, Env) :- lookup(X, Env, [], queue), write("Queue "), write(X), write(" is empty.").
+eval_queue(t_top(X), Env, Env) :- lookup(X, Env, [Top|_], queue), write(Top).
+eval_queue(t_top(t_id(X)), Env, Env) :- lookup(X, Env, [], queue), write("Queue "), write(X), write(" is empty.").
+
+
 % Evaluate Statements
 eval_statement(t_statement_declaration(X), Env, FinalEnv) :- eval_declaration(X, Env, FinalEnv).
 eval_statement(t_statement_assign(X), Env, FinalEnv) :- eval_assignment(X, Env, FinalEnv).
@@ -293,6 +310,7 @@ eval_statement(t_statement_ifelse(X), Env, FinalEnv) :- eval_ifelse_stmt(X, Env,
 eval_statement(t_statement_while(X, Y), Env, FinalEnv) :- eval_while(t_statement_while(X, Y), Env, FinalEnv).
 eval_statement(t_statement_for(X), Env, FinalEnv) :- eval_for_loop(X, Env, FinalEnv).
 eval_statement(t_statement_stack(X), Env, FinalEnv) :- eval_stack(X, Env, FinalEnv).
+eval_statement(t_statement_queue(X), Env, FinalEnv) :- eval_queue(X, Env, FinalEnv).
 
 
 
