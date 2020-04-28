@@ -52,5 +52,5 @@ You can get input file from sample folder
 ## ⚙  Tools Used
 ------------------
 * SWI-Prolog Desktop Application ([Link 🚀](https://www.swi-prolog.org/download/stable/)) 
-* Python Libraries Used - pyswip, tokenize
+* Python Libraries Used - pyswip, tokenize, functools, io
 
