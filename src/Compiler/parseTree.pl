@@ -6,7 +6,7 @@
 
 
 % Reserved Keywords in language
-reserved_keywords([num, true, false, print, bool, str, while, for, def, in, not, and, in, if, else, elif, stack, queue, '(',')','{','}']).
+reserved_keywords([num, true, false, print, bool, str, while, for, def, in, not, and, in, if, else, elif, stack, queue, '(',')','{','}',+,-,*,/,=]).
 check_reserved_keywords(X):- reserved_keywords(L), \+ member(X, L).
 
 % Update Environment
