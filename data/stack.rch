@@ -1,13 +1,11 @@
-stack a
-stack b = [40,20]
-a.top()
-a.push(3)
-b.push(30)
-b.push(70)
-b.push(10)
-a.pop()
-a.pop()
-a.push(20)
-b.top()
-b.pop()
-a.pop()
+stack x = [10, 20, 30]
+
+print(x.pop() + 10 + x.top())
+
+x.push(x.pop())
+
+print(x)
+
+x = [24]
+
+print(x)

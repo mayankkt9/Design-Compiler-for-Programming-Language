@@ -39,6 +39,8 @@ term(X) --> brackets(X).
 brackets(X) --> ['('], expr(X), [')'].
 brackets(X) --> num(X).
 brackets(X) --> identifier(X).
+brackets(t_stack(X)) --> stack_pt(X).
+brackets(t_queue(X)) --> queue_pt(X).
 
 identifier(t_id(X)) -->[X], {check_reserved_keywords(X)}, {atom(X)}.
 num(t_num(X)) --> [X], {number(X)}.
@@ -91,10 +93,10 @@ declaration(Env, FinalEnv, t_declaration_str_assign_concat(X, Y)) --> [string], 
 declaration(Env, FinalEnv, t_declaration_num_assign(X, Y)) --> [num], identifier(X), [=], expr(Y), {update(X, num, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_num_assign(X)) --> [num], identifier(X), {update(X, num, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_num_assign_ternary(X, Y)) --> [num], identifier(X), [=], ternary_op(Y), {update(X, num, Env, FinalEnv)}.
-declaration(Env, FinalEnv, t_declaration_stack_assign(X)) --> [stack], identifier(X), {update(X, stack, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_stack_assign(X, Y)) --> [stack], identifier(X), [=], [Y], {is_list(Y)}, {update(X, stack, Env, FinalEnv)}.
-declaration(Env, FinalEnv, t_declaration_queue_assign(X)) --> [queue], identifier(X), {update(X, queue, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_stack_assign(X)) --> [stack], identifier(X), {update(X, stack, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_queue_assign(X, Y)) --> [queue], identifier(X), [=], [Y], {is_list(Y)}, {update(X, queue, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_queue_assign(X)) --> [queue], identifier(X), {update(X, queue, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_list_assign(X, Y)) --> [list], identifier(X), [=], [Y], {is_list(Y)}, {update(X, list, Env, FinalEnv)}.
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -112,12 +114,14 @@ assignment(Env, Env, t_assignment_list(X, Y)) --> identifier(X), [=], [Y], {is_l
 %----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 % Print statements
-print_lookup(X, Env, true):- lookup(X, str, Env); lookup(X, bool, Env).
+print_lookup(X, Env, true):- lookup(X, str, Env); lookup(X, bool, Env); lookup(X, unknown, Env); lookup(X, stack, Env) ;lookup(X, queue, Env).
 print_statement_list(_Env, t_print()) --> [].
 print_statement_list(Env, X) --> [,], print_statement(Env, X).
 print_statement(Env, t_print(X, Y)) --> [X], {string(X)}, print_statement_list(Env, Y).
 print_statement(Env, t_print_id(X, Y)) --> identifier(X), {print_lookup(X, Env, true)}, print_statement_list(Env, Y).
 print_statement(Env, t_print_expr(X, Y)) --> expr(X), {\+print_lookup(X, Env, true)}, print_statement_list(Env, Y).
+print_statement(_Env, t_print_stack_element(X)) --> stack_pt(X).
+print_statement(_Env, t_print_queue_element(X)) --> queue_pt(X).
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -143,21 +147,22 @@ new_for(Env, t_new_for(A,B,C,D)) --> [for], identifier(A), [in],
 %----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 % stack operations
-stack_op(Env, t_push(X, Y)) --> identifier(X), [.] , [push], ['('], expr(Y) , [')'], {lookup(X, stack, Env)}.
-stack_op(Env, t_pop(X)) --> identifier(X), [.], [pop], ['('], [')'], {lookup(X, stack, Env)}.
-stack_op(Env, t_top(X)) --> identifier(X), [.], [top], ['('],[')'], {lookup(X, stack, Env)}.
+stack_op(_Env, t_stack_pt(X)) --> stack_pt(X).
+stack_op(Env, t_stack_push(X, Y)) --> identifier(X), [.] , [push], ['('], expr(Y) , [')'], {lookup(X, stack, Env)}.
+stack_pt(t_stack_pop(X)) --> identifier(X), [.], [pop], ['('], [')'].
+stack_pt(t_stack_top(X)) --> identifier(X), [.], [top], ['('],[')'].
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 % queue operations
-queue_op(Env, t_push(X, Y)) --> identifier(X), [.] , [push], ['('], expr(Y) , [')'], {lookup(X, queue, Env)}.
-queue_op(Env, t_poll(X)) --> identifier(X), [.], [poll], ['('], [')'], {lookup(X, queue, Env)}.
-queue_op(Env, t_top(X)) --> identifier(X), [.], [top], ['('],[')'], {lookup(X, queue, Env)}.
+queue_op(_Env, t_queue_pt(X)) --> queue_pt(X).
+queue_op(Env, t_queue_push(X, Y)) --> identifier(X), [.] , [push], ['('], expr(Y) , [')'], {lookup(X, queue, Env)}.
+queue_pt(t_queue_poll(X)) --> identifier(X), [.], [poll], ['('], [')'].
+queue_pt(t_queue_head(X)) --> identifier(X), [.], [head], ['('],[')'].
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 % list operations
-% queue operations
 list_op(Env, t_add(X, Y)) --> identifier(X), [.] , [add], ['('], expr(Y) , [')'], {lookup(X, list, Env)}.
 list_op(Env, t_add(X, Y, Z)) --> identifier(X), [.] , [add], ['('], expr(Y) , expr(Z), [')'], {lookup(X, list, Env)}.
 list_op(Env, t_remove(X, Y)) --> identifier(X), [.], [remove], ['('], expr(Y), [')'], {lookup(X, list, Env)}.

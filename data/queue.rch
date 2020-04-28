@@ -1,13 +1,14 @@
 queue a
 queue b = [40,20]
-a.top()
-a.push(3)
-b.push(30)
-b.push(70)
-b.push(10)
-a.pop()
-a.pop()
-a.push(20)
-b.top()
-b.pop()
-a.pop()
+
+print(b, "\n")
+
+a = [11, 20]
+
+stack x = [10, 20]
+
+print(x.top() - a.head(), "\n")
+
+x.push(40)
+
+print(x.top() - b.head())

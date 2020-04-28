@@ -76,6 +76,10 @@ eval_expr(t_id(X), Env, Env, _Val):- \+check_present(X, Env), write("Variable no
 eval_expr(t_id(X), Env, Env, Val):- lookup(X, Env, Val, Type), Type \= num,
     write("This operation can only be perfomed on num type of variable. Please check."),nl, abort.
 
+eval_expr(t_stack(X), Env, FinalEnv, Val) :- eval_stack_pt(X, Val, Env, FinalEnv).
+    
+eval_expr(t_queue(X), Env, FinalEnv, Val) :- eval_queue_pt(X, Val, Env, FinalEnv).
+
 %----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 % Evaluate Boolean Expression
@@ -278,20 +282,24 @@ eval_for_statement(t_conventional_for(A,_,C,D,_,_), Env, Env) :- eval_bool(t_boo
 %----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 % Evaluate stack commands
-eval_stack(t_push(X, t_num(Y)), Env, FinalEnv) :- lookup(X, Env, Val, stack), update(X, [Y|Val], stack, Env, FinalEnv).
-eval_stack(t_pop(X), Env, FinalEnv) :- lookup(X, Env, [_|Rest], stack), update(X, Rest, stack, Env, FinalEnv).
-eval_stack(t_pop(t_id(X)), Env, Env) :- lookup(X, Env, [], stack), write("Stack "), write(X), write(" is empty."), nl.
-eval_stack(t_top(X), Env, Env) :- lookup(X, Env, [Top|_], stack), write(Top), nl.
-eval_stack(t_top(t_id(X)), Env, Env) :- lookup(X, Env, [], stack), write("Stack "), write(X), write(" is empty."), nl.
+eval_stack(t_stack_push(X, Y), Env, FinalEnv) :- eval_expr(Y, Env, Env1, V1), lookup(X, Env1, V2, stack), update(X, [V1|V2], stack, Env1, FinalEnv).
+
+eval_stack(t_stack_pt(X), Env, FinalEnv) :- eval_stack_pt(X, _Val, Env, FinalEnv).
+eval_stack_pt(t_stack_pop(X), Val, Env, FinalEnv) :- lookup(X, Env, [Val|Rest], stack), update(X, Rest, stack, Env, FinalEnv).
+eval_stack_pt(t_stack_pop(X), _Val, Env, Env) :- lookup(X, Env, [], stack), write("Stack "), write(X), write(" is empty."), abort.
+eval_stack_pt(t_stack_top(X), Val, Env, Env) :- lookup(X, Env, [Val|_], stack).
+eval_stack_pt(t_stack_top(X), _Val, Env, Env) :- lookup(X, Env, [], stack), write("Stack "), write(X), write(" is empty."), nl.
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 % Evaluate queue commands
-eval_queue(t_push(X, t_num(Y)), Env, FinalEnv) :- lookup(X, Env, Val, queue), append(Val, [Y], FinalVal), update(X, FinalVal, queue, Env, FinalEnv).
-eval_queue(t_poll(X), Env, FinalEnv) :- lookup(X, Env, [_|Rest], queue), update(X, Rest, queue, Env, FinalEnv).
-eval_queue(t_poll(t_id(X)), Env, Env) :- lookup(X, Env, [], queue), write("Queue "), write(X), write(" is empty."), nl.
-eval_queue(t_top(X), Env, Env) :- lookup(X, Env, [Top|_], queue), write(Top), nl.
-eval_queue(t_top(t_id(X)), Env, Env) :- lookup(X, Env, [], queue), write("Queue "), write(X), write(" is empty."), nl.
+eval_queue(t_queue_push(X, Y), Env, FinalEnv) :- eval_expr(Y, Env, Env1, V1), lookup(X, Env1, V2, queue), append(V2, [V1], FinalVal), update(X, FinalVal, queue, Env1, FinalEnv).
+
+eval_queue(t_queue_pt(X), Env, FinalEnv) :- eval_queue_pt(X, _Val, Env, FinalEnv).
+eval_queue_pt(t_queue_poll(X), Val, Env, FinalEnv) :- lookup(X, Env, [Val|Rest], queue), update(X, Rest, queue, Env, FinalEnv).
+eval_queue_pt(t_queue_poll(X), _Val, Env, Env) :- lookup(X, Env, [], queue), write("Queue "), write(X), write(" is empty."), abort.
+eval_queue_pt(t_queue_head(X), Val, Env, Env) :- lookup(X, Env, [Val|_], queue).
+eval_queue_pt(t_queue_head(X), _Val, Env, Env) :- lookup(X, Env, [], queue), write("Queue "), write(X), write(" is empty."), nl.
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------
 
