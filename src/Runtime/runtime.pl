@@ -287,7 +287,7 @@ eval_for_statement(t_conventional_for(A,B,C,D,E,F), Env, FinalEnv) :- eval_bool(
 eval_for_statement(t_conventional_for(A,_,C,D,_,_), Env, Env) :- eval_bool(t_bool(A, C, D), Env, _, false).
 
 % Evaluate stack commands
-eval_stack(t_push(X, Y), Env, FinalEnv) :- lookup(X, Env, Val, stack), update(X, [Y|Val], stack, Env, FinalEnv).
+eval_stack(t_push(X, t_num(Y)), Env, FinalEnv) :- lookup(X, Env, Val, stack), update(X, [Y|Val], stack, Env, FinalEnv).
 eval_stack(t_pop(X), Env, FinalEnv) :- lookup(X, Env, [_|Rest], stack), update(X, Rest, stack, Env, FinalEnv).
 eval_stack(t_pop(t_id(X)), Env, Env) :- lookup(X, Env, [], stack), write("Stack "), write(X), write(" is empty.").
 eval_stack(t_top(X), Env, Env) :- lookup(X, Env, [Top|_], stack), write(Top).
