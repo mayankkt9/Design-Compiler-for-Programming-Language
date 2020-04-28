@@ -121,6 +121,11 @@ stack_op(Env, t_push(X, Y)) --> identifier(X), [.] , [push], ['('], expr(Y) , ['
 stack_op(Env, t_pop(X)) --> identifier(X), [.], [pop], ['('], [')'], {lookup(X, stack, Env)}.
 stack_op(Env, t_top(X)) --> identifier(X), [.], [top], ['('],[')'], {lookup(X, stack, Env)}.
 
+% queue operations
+queue_op(Env, t_push(X, Y)) --> identifier(X), [.] , [push], ['('], expr(Y) , [')'], {lookup(X, queue, Env)}.
+queue_op(Env, t_poll(X)) --> identifier(X), [.], [poll], ['('], [')'], {lookup(X, queue, Env)}.
+queue_op(Env, t_top(X)) --> identifier(X), [.], [top], ['('],[')'], {lookup(X, queue, Env)}.
+
 % General Statements and While loop
 statement(Env, FinalEnv, t_statement_declaration(X)) --> declaration(Env, FinalEnv, X).
 statement(Env, FinalEnv, t_statement_assign(X)) --> assignment(Env, FinalEnv, X).
