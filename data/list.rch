@@ -1,0 +1,8 @@
+list a = []
+a.add(10)
+a.add(20,1)
+a = [40,60,10]
+a.add(5)
+a.remove(1)
+a.add(3)
+a.get(2)
