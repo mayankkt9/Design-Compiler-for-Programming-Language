@@ -79,6 +79,8 @@ declaration(Env, FinalEnv, t_declaration_num_assign(X)) --> [num], identifier(X)
 declaration(Env, FinalEnv, t_declaration_num_assign_ternary(X, Y)) --> [num], identifier(X), [=], ternary_op(Y), {update(X, num, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_stack_assign(X)) --> [stack], identifier(X), {update(X, stack, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_stack_assign(X, Y)) --> [stack], identifier(X), [=], [Y], {is_list(Y)}, {update(X, stack, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_queue_assign(X)) --> [queue], identifier(X), {update(X, queue, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_queue_assign(X, Y)) --> [queue], identifier(X), [=], [Y], {is_list(Y)}, {update(X, queue, Env, FinalEnv)}.
 
 % Assignment statements
 assignment(Env, Env, t_assignment_num_assign(X, Y)) --> identifier(X), [=], expr(Y), {lookup(X, num, Env)}.
@@ -87,6 +89,7 @@ assignment(Env, Env, t_assignment_bool(X, Y)) --> identifier(X), [=], bool(Y), {
 assignment(Env, Env, t_assignment_str(X, Y)) --> identifier(X), [=], [Y], {string(Y)}, {lookup(X, str, Env)}.
 assignment(Env, Env, t_assignment_str_concat(X, Y)) --> identifier(X), [=], string_add(Y), {lookup(X, str, Env)}.
 assignment(Env, Env, t_assignment_stack(X, Y)) --> identifier(X), [=], [Y], {is_list(Y)}, {lookup(X, stack, Env)}.
+assignment(Env, Env, t_assignment_queue(X, Y)) --> identifier(X), [=], [Y], {is_list(Y)}, {lookup(X, queue, Env)}.
 
 % Print statements
 print_lookup(X, Env, true):- lookup(X, str, Env); lookup(X, bool, Env).
@@ -127,6 +130,7 @@ statement(Env, Env, t_statement_while(X, Y)) --> [while], ['('], bool(X), [')'],
 statement(Env, Env, t_statement_for(X)) --> conventional_for(Env, X).
 statement(Env, Env, t_statement_for(X)) --> new_for(Env, X).
 statement(Env, Env, t_statement_stack(X)) --> stack_op(Env, X).
+statement(Env, Env, t_statement_queue(X)) --> queue_op(Env, X).
 
 % Command List and single command is called statement.
 command(Env, FinalEnv, t_command(X, Y)) --> statement(Env, Env1, X), command(Env1, FinalEnv, Y).
