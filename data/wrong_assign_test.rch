@@ -1,11 +1,17 @@
-boolean a = true
-boolean b = false
-num f = 1
-a = f and b
-print(e)
+num x = 10
+
+#x = "string"
+
+if (x==10){
+    num n = 20
+}
+
+#print(n)
 
 
 
-int t  = "abc"
-string s = 123
-boolena m = 1
+for i in range(1, 5){
+    print(i, "\n")
+}
+
+#print(i)

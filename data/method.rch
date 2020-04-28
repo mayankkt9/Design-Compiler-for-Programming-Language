@@ -1,5 +1,15 @@
 def add(x, y) {
-    print(x + y)
+    print(x + y, "\n")
 }
 
 add(2,3)
+
+num x = 10
+num y = 20
+
+add(x, y)
+
+
+num z = 10
+
+add(10, z)
