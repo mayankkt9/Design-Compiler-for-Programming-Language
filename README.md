@@ -33,6 +33,10 @@ python main.py inputfile
 ``` 
 You can get input file from sample folder
 
+## ⚙  How to Install it on (Windows)
+------------------
+
+
 
 ## ⚙  Tools Used
 ------------------
