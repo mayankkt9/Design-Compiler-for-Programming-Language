@@ -4,6 +4,11 @@
 :- use_module(library(tabling)).
 :- table expr_op/3, term/3, bool/3.
 
+
+% Reserved Keywords in language
+reserved_keywords([num, true, false, print, bool, str, while, for, def, in, not, and, in, if, else, elif, stack, queue, '(',')','{','}']).
+check_reserved_keywords(X):- reserved_keywords(L), \+ member(X, L).
+
 % Update Environment
 update(t_id(K), Type, Env, FinalEnv) :- updte(K, Type, Env, FinalEnv).
 updte(K, Type, [], [(K,Type)]).
@@ -34,7 +39,7 @@ brackets(X) --> ['('], expr(X), [')'].
 brackets(X) --> num(X).
 brackets(X) --> identifier(X).
 
-identifier(t_id(X)) -->[X],{X \= true}, {X \= false}, {atom(X)}.
+identifier(t_id(X)) -->[X], {check_reserved_keywords(X)}, {atom(X)}.
 num(t_num(X)) --> [X], {number(X)}.
 
 % Boolean Operators
@@ -77,6 +82,10 @@ declaration(Env, FinalEnv, t_declaration_str_assign_concat(X, Y)) --> [string], 
 declaration(Env, FinalEnv, t_declaration_num_assign(X, Y)) --> [num], identifier(X), [=], expr(Y), {update(X, num, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_num_assign(X)) --> [num], identifier(X), {update(X, num, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_num_assign_ternary(X, Y)) --> [num], identifier(X), [=], ternary_op(Y), {update(X, num, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_stack_assign(X)) --> [stack], identifier(X), {update(X, stack, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_stack_assign(X, Y)) --> [stack], identifier(X), [=], [Y], {is_list(Y)}, {update(X, stack, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_queue_assign(X)) --> [queue], identifier(X), {update(X, queue, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_queue_assign(X, Y)) --> [queue], identifier(X), [=], [Y], {is_list(Y)}, {update(X, queue, Env, FinalEnv)}.
 
 % Assignment statements
 assignment(Env, Env, t_assignment_num_assign(X, Y)) --> identifier(X), [=], expr(Y), {lookup(X, num, Env)}.
@@ -84,7 +93,8 @@ assignment(Env, Env, t_assignment_num_assign_ternary(X, Y)) --> identifier(X), [
 assignment(Env, Env, t_assignment_bool(X, Y)) --> identifier(X), [=], bool(Y), {lookup(X, bool, Env)}.
 assignment(Env, Env, t_assignment_str(X, Y)) --> identifier(X), [=], [Y], {string(Y)}, {lookup(X, str, Env)}.
 assignment(Env, Env, t_assignment_str_concat(X, Y)) --> identifier(X), [=], string_add(Y), {lookup(X, str, Env)}.
-
+assignment(Env, Env, t_assignment_stack(X, Y)) --> identifier(X), [=], [Y], {is_list(Y)}, {lookup(X, stack, Env)}.
+assignment(Env, Env, t_assignment_queue(X, Y)) --> identifier(X), [=], [Y], {is_list(Y)}, {lookup(X, queue, Env)}.
 
 % Print statements
 print_lookup(X, Env, true):- lookup(X, str, Env); lookup(X, bool, Env).
@@ -111,7 +121,48 @@ conventional_for(Env, t_conventional_for(A,B,C,D,E,F)) --> [for], ['('], identif
 new_for(Env, t_new_for(A,B,C,D)) --> [for], identifier(A), [in],
     [range], ['('], expr(B), [,], expr(C), [')'], {update(A, num, Env, FinalEnv)}, ['{'], command(FinalEnv, _, D), ['}'].
 
-% General Statements and While loop
+% stack operations
+stack_op(Env, t_push(X, Y)) --> identifier(X), [.] , [push], ['('], expr(Y) , [')'], {lookup(X, stack, Env)}.
+stack_op(Env, t_pop(X)) --> identifier(X), [.], [pop], ['('], [')'], {lookup(X, stack, Env)}.
+stack_op(Env, t_top(X)) --> identifier(X), [.], [top], ['('],[')'], {lookup(X, stack, Env)}.
+
+% queue operations
+queue_op(Env, t_push(X, Y)) --> identifier(X), [.] , [push], ['('], expr(Y) , [')'], {lookup(X, queue, Env)}.
+queue_op(Env, t_poll(X)) --> identifier(X), [.], [poll], ['('], [')'], {lookup(X, queue, Env)}.
+queue_op(Env, t_top(X)) --> identifier(X), [.], [top], ['('],[')'], {lookup(X, queue, Env)}.
+
+
+% Method Declaration
+formal_parameter_list(Env, FinalEnv, X) --> [,], get_formal_parameters(Env, FinalEnv, X).
+formal_parameter_list(Env, Env, t_formal_parameter()) --> [].
+get_formal_parameters(Env, FinalEnv, t_formal_parameter(X, Y)) --> identifier(X), {update(X, unknown, Env, Env1)}, formal_parameter_list(Env1, FinalEnv, Y).
+get_formal_parameters(Env, Env, t_formal_parameter()) --> [].
+
+get_body(Env, t_body(X)) --> command(Env, _FinalEnv, X).
+
+method_dec(Env, FinalEnv, t_method_declaration(X, Y, Z)) --> [def], identifier(X),
+    ['('],get_formal_parameters([], Env1, Y),[')'],
+    ['{'],get_body(Env1, Z),['}'],
+    {update(X, method, Env, FinalEnv)}.
+
+
+% Method Call
+actual_parameter_list(Env, X) --> [,], get_actual_parameters(Env, X).
+actual_parameter_list(_Env, t_actual_parameter()) --> [].
+
+get_actual_parameters(Env, t_actual_parameter(X, Y)) --> identifier(X), {lookup(X, _, Env)}, actual_parameter_list(Env, Y).
+get_actual_parameters(Env, t_actual_parameter(t_str(X), Y)) --> [X], {string(X)}, actual_parameter_list(Env, Y).
+get_actual_parameters(Env, t_actual_parameter(t_num(X), Y)) --> [X], {number(X)}, actual_parameter_list(Env, Y).
+get_actual_parameters(_Env, t_actual_parameter()) --> [].
+
+method_call(Env, t_method_call(X, Y)) --> identifier(X), ['('], get_actual_parameters(Env, Y), [')'], {lookup(X, method, Env)}.
+
+% Methods
+method(Env, FinalEnv, X) --> method_dec(Env, FinalEnv, X).
+method(Env, Env, X) --> method_call(Env, X).
+
+% Statements
+statement(Env, FinalEnv, t_statement_method(X)) --> method(Env, FinalEnv, X).
 statement(Env, FinalEnv, t_statement_declaration(X)) --> declaration(Env, FinalEnv, X).
 statement(Env, FinalEnv, t_statement_assign(X)) --> assignment(Env, FinalEnv, X).
 statement(Env, Env, t_statement_print(X)) --> [print], ['('] , print_statement(Env, X), [')'].
@@ -119,6 +170,8 @@ statement(Env, Env, t_statement_ifelse(X)) --> if_stmt(Env, X).
 statement(Env, Env, t_statement_while(X, Y)) --> [while], ['('], bool(X), [')'], ['{'], command(Env, _, Y), ['}'].
 statement(Env, Env, t_statement_for(X)) --> conventional_for(Env, X).
 statement(Env, Env, t_statement_for(X)) --> new_for(Env, X).
+statement(Env, Env, t_statement_stack(X)) --> stack_op(Env, X).
+statement(Env, Env, t_statement_queue(X)) --> queue_op(Env, X).
 
 % Command List and single command is called statement.
 command(Env, FinalEnv, t_command(X, Y)) --> statement(Env, Env1, X), command(Env1, FinalEnv, Y).
@@ -127,5 +180,5 @@ command(Env, Env, t_command()) --> [].
 % Block.
 block(t_block(X))-->command([], _, X).
 
-% Program entr point. Will take input as list of tokens and generate parse tree.
+% Program entery point. Will take input as list of tokens and generate parse tree.
 program(t_program(X))-->block(X).
