@@ -77,6 +77,8 @@ declaration(Env, FinalEnv, t_declaration_str_assign_concat(X, Y)) --> [string], 
 declaration(Env, FinalEnv, t_declaration_num_assign(X, Y)) --> [num], identifier(X), [=], expr(Y), {update(X, num, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_num_assign(X)) --> [num], identifier(X), {update(X, num, Env, FinalEnv)}.
 declaration(Env, FinalEnv, t_declaration_num_assign_ternary(X, Y)) --> [num], identifier(X), [=], ternary_op(Y), {update(X, num, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_stack_assign(X)) --> [stack], identifier(X), {update(X, stack, Env, FinalEnv)}.
+declaration(Env, FinalEnv, t_declaration_stack_assign(X, Y)) --> [stack], identifier(X), [=], [Y], {is_list(Y)}, {update(X, stack, Env, FinalEnv)}.
 
 % Assignment statements
 assignment(Env, Env, t_assignment_num_assign(X, Y)) --> identifier(X), [=], expr(Y), {lookup(X, num, Env)}.
