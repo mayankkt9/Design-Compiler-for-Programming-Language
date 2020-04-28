@@ -1,10 +1,10 @@
-string a = "abc"
-string b = "def"
+string a = "ser"
+string b = "502"
 
-string c = a + "oio"
+string c = a + " class"
 print(c, "\n")
 string d
 d = a + b
 print(d, "\n")
-d = b + "xyz"
+d = b + " concat"
 print(d, "\n")
