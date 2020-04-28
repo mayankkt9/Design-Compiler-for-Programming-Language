@@ -20,8 +20,6 @@ check_present(t_id(K),Env) :- check_present(K, Env).
 check_present(K,[(K,_,_)|_]).
 check_present(K,[(H,_,_)|T]) :- K \= H, check_present(K,T).
 
-
-
 % Evaluate Expression
 eval_expr(t_assign(t_id(X), Y), Env, FinalEnv, Val):- check_present(X, Env),
     eval_expr(Y, Env, Env1, Val), update(X, Val, num, Env1, FinalEnv).
@@ -163,6 +161,11 @@ eval_declaration(t_declaration_num_assign_ternary(t_id(X), Y), Env, FinalEnv) :-
 eval_declaration(t_declaration_num_assign(t_id(X)), Env, FinalEnv) :- 
     update(X, 0, num, Env, FinalEnv).
 
+eval_declaration(t_declaration_stack_assign(t_id(X)), Env, FinalEnv) :- 
+    update(X, [], stack, Env, FinalEnv).
+
+eval_declaration(t_declaration_stack_assign(t_id(X), Y), Env, FinalEnv) :- 
+    update(X, Y, stack, Env, FinalEnv).
 
 
 % Evaluate assign statements
@@ -225,6 +228,9 @@ eval_assignment(t_assignment_num_assign_ternary(t_id(X), _Y), Env, _FinalEnv) :-
 	fail.
 */
 
+eval_assignment(t_assignment_stack(t_id(X), Y), Env, FinalEnv) :- 
+	update(X, Y, stack, Env, FinalEnv).
+
 
 % Print Statements
 eval_print(t_print(), Env, Env).
@@ -271,6 +277,12 @@ eval_for_statement(t_conventional_for(A,B,C,D,E,F), Env, FinalEnv) :- eval_bool(
 
 eval_for_statement(t_conventional_for(A,_,C,D,_,_), Env, Env) :- eval_bool(t_bool(A, C, D), Env, _, false).
 
+% Evaluate stack commands
+eval_stack(t_push(X, Y), Env, FinalEnv) :- lookup(X, Env, Val, stack), update(X, [Y|Val], stack, Env, FinalEnv).
+eval_stack(t_pop(X), Env, FinalEnv) :- lookup(X, Env, [_|Rest], stack), update(X, Rest, stack, Env, FinalEnv).
+eval_stack(t_pop(t_id(X)), Env, Env) :- lookup(X, Env, [], stack), write("Stack "), write(X), write(" is empty.").
+eval_stack(t_top(X), Env, Env) :- lookup(X, Env, [Top|_], stack), write(Top).
+eval_stack(t_top(t_id(X)), Env, Env) :- lookup(X, Env, [], stack), write("Stack "), write(X), write(" is empty.").
 
 
 % Evaluate Statements
@@ -280,6 +292,7 @@ eval_statement(t_statement_print(X), Env, FinalEnv) :- eval_print(X, Env, FinalE
 eval_statement(t_statement_ifelse(X), Env, FinalEnv) :- eval_ifelse_stmt(X, Env, FinalEnv).	
 eval_statement(t_statement_while(X, Y), Env, FinalEnv) :- eval_while(t_statement_while(X, Y), Env, FinalEnv).
 eval_statement(t_statement_for(X), Env, FinalEnv) :- eval_for_loop(X, Env, FinalEnv).
+eval_statement(t_statement_stack(X), Env, FinalEnv) :- eval_stack(X, Env, FinalEnv).
 
 
 
