@@ -20,6 +20,27 @@ check_present(t_id(K),Env) :- check_present(K, Env).
 check_present(K,[(K,_,_)|_]).
 check_present(K,[(H,_,_)|T]) :- K \= H, check_present(K,T).
 
+
+% List operations
+addAtIndex(_ValToAdd, List, Index, _FinalList) :- length(List, Length), Index >= Length + 2, write("Length of the list is "), write(Length), write(". Please provide correct index."), nl, fail.
+addAtIndex(_ValToAdd, _List, Index, _FinalList) :- Index =< 0, write("Please provide index greater than 0."), nl, fail.
+addAtIndex(ValToAdd, List, Index, FinalList) :- length(List, Length), Index < Length + 2, Index > 0, addAtIndex(ValToAdd, List, 1, Index, FinalList).
+addAtIndex(ValToAdd, List, Iterator, Index, [ValToAdd|List]) :- Iterator =:= Index.
+addAtIndex(ValToAdd, [H|T], Iterator, Index, [H|FinalList]) :- Iterator < Index, NextIterator = Iterator + 1, addAtIndex(ValToAdd, T, NextIterator, Index, FinalList).
+
+deleteAtIndex(Index, List, _FinalList) :- length(List, Length), Index > Length, write("Length of the list is "), write(Length), write(". Please provide correct index."), nl, fail.
+deleteAtIndex(Index, _List, _FinalVal) :- Index =< 0, write("Please provide index greater than 0."), nl, fail.
+deleteAtIndex(Index, List, FinalList) :- length(List, Length), Index =< Length, Index > 0, deleteAtIndex(Index, 1, List, FinalList).
+deleteAtIndex(Index, Iterator, [_|T], T) :- Index =:= Iterator.
+deleteAtIndex(Index, Iterator, [H|T], [H|FinalList]) :- Iterator < Index, NextIterator = Iterator + 1, deleteAtIndex(Index, NextIterator, T, FinalList).
+
+getAtIndex(Index, List, _Val) :- length(List, Length), Index > Length, write("Length of the list is "), write(Length), write(". Please provide correct index."), nl, fail.
+getAtIndex(Index, _List, _Val) :- Index =< 0, write("Please provide index greater than 0."), nl, fail.
+getAtIndex(Index, List, Val) :- length(List, Length), Index =< Length, Index > 0, getAtIndex(Index, 1, List, Val).
+getAtIndex(Index, Iterator, [Val|_], Val) :- Index =:= Iterator.
+getAtIndex(Index, Iterator, [_|T], Val) :- Iterator < Index, NextIterator = Iterator + 1, getAtIndex(Index, NextIterator, T, Val).
+
+
 % Evaluate Expression
 eval_expr(t_assign(t_id(X), Y), Env, FinalEnv, Val):- check_present(X, Env),
     eval_expr(Y, Env, Env1, Val), update(X, Val, num, Env1, FinalEnv).
@@ -173,6 +194,9 @@ eval_declaration(t_declaration_queue_assign(t_id(X)), Env, FinalEnv) :-
 eval_declaration(t_declaration_queue_assign(t_id(X), Y), Env, FinalEnv) :- 
     update(X, Y, queue, Env, FinalEnv).
 
+eval_declaration(t_declaration_list_assign(t_id(X), Y), Env, FinalEnv) :- 
+    update(X, Y, list, Env, FinalEnv).
+
 
 % Evaluate assign statements
 /*
@@ -240,6 +264,9 @@ eval_assignment(t_assignment_stack(t_id(X), Y), Env, FinalEnv) :-
 eval_assignment(t_assignment_queue(t_id(X), Y), Env, FinalEnv) :- 
 	update(X, Y, queue, Env, FinalEnv).
 
+eval_assignment(t_assignment_list(t_id(X), Y), Env, FinalEnv) :- 
+	update(X, Y, list, Env, FinalEnv).
+
 
 % Print Statements
 eval_print(t_print(), Env, Env).
@@ -292,9 +319,9 @@ eval_for_statement(t_conventional_for(A,_,C,D,_,_), Env, Env) :- eval_bool(t_boo
 % Evaluate stack commands
 eval_stack(t_push(X, t_num(Y)), Env, FinalEnv) :- lookup(X, Env, Val, stack), update(X, [Y|Val], stack, Env, FinalEnv).
 eval_stack(t_pop(X), Env, FinalEnv) :- lookup(X, Env, [_|Rest], stack), update(X, Rest, stack, Env, FinalEnv).
-eval_stack(t_pop(t_id(X)), Env, Env) :- lookup(X, Env, [], stack), write("Stack "), write(X), write(" is empty.").
-eval_stack(t_top(X), Env, Env) :- lookup(X, Env, [Top|_], stack), write(Top).
-eval_stack(t_top(t_id(X)), Env, Env) :- lookup(X, Env, [], stack), write("Stack "), write(X), write(" is empty.").
+eval_stack(t_pop(t_id(X)), Env, Env) :- lookup(X, Env, [], stack), write("Stack "), write(X), write(" is empty."), nl.
+eval_stack(t_top(X), Env, Env) :- lookup(X, Env, [Top|_], stack), write(Top), nl.
+eval_stack(t_top(t_id(X)), Env, Env) :- lookup(X, Env, [], stack), write("Stack "), write(X), write(" is empty."), nl.
 
 
 
@@ -302,10 +329,17 @@ eval_stack(t_top(t_id(X)), Env, Env) :- lookup(X, Env, [], stack), write("Stack 
 % Evaluate queue commands
 eval_queue(t_push(X, t_num(Y)), Env, FinalEnv) :- lookup(X, Env, Val, queue), append(Val, [Y], FinalVal), update(X, FinalVal, queue, Env, FinalEnv).
 eval_queue(t_poll(X), Env, FinalEnv) :- lookup(X, Env, [_|Rest], queue), update(X, Rest, queue, Env, FinalEnv).
-eval_queue(t_poll(t_id(X)), Env, Env) :- lookup(X, Env, [], queue), write("Queue "), write(X), write(" is empty.").
-eval_queue(t_top(X), Env, Env) :- lookup(X, Env, [Top|_], queue), write(Top).
-eval_queue(t_top(t_id(X)), Env, Env) :- lookup(X, Env, [], queue), write("Queue "), write(X), write(" is empty.").
+eval_queue(t_poll(t_id(X)), Env, Env) :- lookup(X, Env, [], queue), write("Queue "), write(X), write(" is empty."), nl.
+eval_queue(t_top(X), Env, Env) :- lookup(X, Env, [Top|_], queue), write(Top), nl.
+eval_queue(t_top(t_id(X)), Env, Env) :- lookup(X, Env, [], queue), write("Queue "), write(X), write(" is empty."), nl.
 
+
+
+% Evaluate list commands
+eval_list(t_add(X, t_num(Y)), Env, FinalEnv) :- lookup(X, Env, Val, list), append(Val, [Y], FinalVal), update(X, FinalVal, list, Env, FinalEnv).
+eval_list(t_add(X, t_num(ValToAdd), t_num(Index)), Env, FinalEnv) :- lookup(X, Env, Val, list), addAtIndex(ValToAdd, Val, Index, FinalVal), update(X, FinalVal, list, Env, FinalEnv).
+eval_list(t_remove(X, t_num(Index)), Env, FinalEnv) :- lookup(X, Env, Val, list), deleteAtIndex(Index, Val, FinalVal), update(X, FinalVal, list, Env, FinalEnv).
+eval_list(t_get(X, t_num(Index)), Env, Env) :- lookup(X, Env, List, list), getAtIndex(Index, List, Val), write(Val), nl.
 
 
 % Method
@@ -346,6 +380,7 @@ eval_statement(t_statement_while(X, Y), Env, FinalEnv) :- eval_while(t_statement
 eval_statement(t_statement_for(X), Env, FinalEnv) :- eval_for_loop(X, Env, FinalEnv).
 eval_statement(t_statement_stack(X), Env, FinalEnv) :- eval_stack(X, Env, FinalEnv).
 eval_statement(t_statement_queue(X), Env, FinalEnv) :- eval_queue(X, Env, FinalEnv).
+eval_statement(t_statement_list(X), Env, FinalEnv) :- eval_list(X, Env, FinalEnv).
 eval_statement(t_statement_method(X), Env, FinalEnv) :- eval_method(X, Env, FinalEnv).
 
 
