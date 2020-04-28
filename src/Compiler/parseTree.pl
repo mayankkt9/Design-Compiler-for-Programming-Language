@@ -86,7 +86,7 @@ assignment(Env, Env, t_assignment_num_assign_ternary(X, Y)) --> identifier(X), [
 assignment(Env, Env, t_assignment_bool(X, Y)) --> identifier(X), [=], bool(Y), {lookup(X, bool, Env)}.
 assignment(Env, Env, t_assignment_str(X, Y)) --> identifier(X), [=], [Y], {string(Y)}, {lookup(X, str, Env)}.
 assignment(Env, Env, t_assignment_str_concat(X, Y)) --> identifier(X), [=], string_add(Y), {lookup(X, str, Env)}.
-
+assignment(Env, Env, t_assignment_stack(X, Y)) --> identifier(X), [=], [Y], {is_list(Y)}, {lookup(X, stack, Env)}.
 
 % Print statements
 print_lookup(X, Env, true):- lookup(X, str, Env); lookup(X, bool, Env).
@@ -121,6 +121,7 @@ statement(Env, Env, t_statement_ifelse(X)) --> if_stmt(Env, X).
 statement(Env, Env, t_statement_while(X, Y)) --> [while], ['('], bool(X), [')'], ['{'], command(Env, _, Y), ['}'].
 statement(Env, Env, t_statement_for(X)) --> conventional_for(Env, X).
 statement(Env, Env, t_statement_for(X)) --> new_for(Env, X).
+statement(Env, Env, t_statement_stack(X)) --> stack_op(Env, X).
 
 % Command List and single command is called statement.
 command(Env, FinalEnv, t_command(X, Y)) --> statement(Env, Env1, X), command(Env1, FinalEnv, Y).
