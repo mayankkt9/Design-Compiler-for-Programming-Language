@@ -23,7 +23,7 @@ python3 main.py sourcecode.rch
 export PATH=$PATH:/Applications/SWI-Prolog.app/Contents/swipl/bin/x86_64-darwin15.6.0
 export DYLD_FALLBACK_LIBRARY_PATH=/Applications/SWI-Prolog.app/Contents/swipl/lib/x86_64-darwin15.6.0
 ``` 
-* Make sure pip and python are installed on your mac and then run
+* Make sure pip3 and python3 are installed on your mac and then run
 ```
 pip3 install -r requirements.txt
 ```
@@ -36,6 +36,17 @@ You can get input file from sample folder
 ## ⚙  How to Install it on (Windows)
 ------------------
 
+* Install latest SWI-Prolog Version ([Click to Install 🚀](https://www.swi-prolog.org/download/stable/bin/swipl-8.0.3-1.x64.exe.envelope)) 
+
+* Make sure pip and python are installed on your windows and then run
+```
+pip install -r requirements.txt
+```
+* Run main.py present in src
+``` 
+python main.py inputfile
+``` 
+You can get input file from sample folder
 
 
 ## ⚙  Tools Used
