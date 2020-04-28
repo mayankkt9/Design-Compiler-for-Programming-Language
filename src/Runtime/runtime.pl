@@ -2,16 +2,16 @@
 
 % Update Environment
 update(t_id(K), V, Type, Env, FinalEnv) :- update(K, V, Type, Env, FinalEnv).
-update(K, V, Type, [], [(K, V, Type)]).
-update(K, V, Type, [(K, _, _)|T], [(K, V, Type)|T]).
-update(K, V, Type, [H|T], [H|R]) :- H \= (K,_,_), update(K, V, Type, T, R).
+update(K, V, Type, [], [(K, V, Type)]) :- K \= t_id(_).
+update(K, V, Type, [(K, _, _)|T], [(K, V, Type)|T]) :- K \= t_id(_).
+update(K, V, Type, [H|T], [H|R]) :- K \= t_id(_), H \= (K,_,_), update(K, V, Type, T, R).
 
 
 
 % Lookup Value in Environment
 lookup(t_id(K), Env, V, Type) :- lookup(K, Env, V, Type).
-lookup(K, [(K,V,Type)|_], V, Type).
-lookup(K, [_|T], V, Type) :- lookup(K, T, V, Type).
+lookup(K, [(K,V,Type)|_], V, Type) :- K \= t_id(_).
+lookup(K, [_|T], V, Type) :- K \= t_id(_), lookup(K, T, V, Type).
 
 
 
