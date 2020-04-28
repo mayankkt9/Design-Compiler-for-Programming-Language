@@ -71,13 +71,13 @@ if __name__ == "__main__":
     file_remove = file + "_rem"
     try:
         parse_tree = create_parse_tree(lex)
-    except StopIteration:
+    except Exception:
         print("Syntax Error")
         os.remove(file_remove) if os.path.exists(file_remove) else None
         sys.exit(0)
     try:
         give_semantics(parse_tree)
-    except StopIteration:
+    except Exception:
         print("Semantics Error")
         os.remove(file_remove) if os.path.exists(file_remove) else None
         sys.exit(0)
