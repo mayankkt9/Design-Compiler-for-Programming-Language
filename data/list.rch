@@ -1,8 +1,10 @@
 list a = []
+a = [40,60,30]
 a.add(10)
 a.add(20,1)
-a = [40,60,10]
 a.add(5)
-a.remove(1)
+a.remove(3)
 a.add(3)
 a.get(2)
+
+#[20,40,30,10,5,3]

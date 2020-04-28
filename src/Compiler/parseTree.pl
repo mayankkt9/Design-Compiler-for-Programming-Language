@@ -164,7 +164,7 @@ queue_pt(t_queue_head(X)) --> identifier(X), [.], [head], ['('],[')'].
 
 % list operations
 list_op(Env, t_add(X, Y)) --> identifier(X), [.] , [add], ['('], expr(Y) , [')'], {lookup(X, list, Env)}.
-list_op(Env, t_add(X, Y, Z)) --> identifier(X), [.] , [add], ['('], expr(Y) , expr(Z), [')'], {lookup(X, list, Env)}.
+list_op(Env, t_add(X, Y, Z)) --> identifier(X), [.] , [add], ['('], expr(Y), [','], expr(Z), [')'], {lookup(X, list, Env)}.
 list_op(Env, t_remove(X, Y)) --> identifier(X), [.], [remove], ['('], expr(Y), [')'], {lookup(X, list, Env)}.
 list_op(Env, t_get(X, Y)) --> identifier(X), [.], [get], ['('], expr(Y) , [')'], {lookup(X, list, Env)}.
 
