@@ -1,0 +1,9 @@
+stack a
+stack b = [40,20]
+a.top()
+a.push(3)
+b.push(30)
+b.top()
+b.pop()
+a.pop()
+a.pop()

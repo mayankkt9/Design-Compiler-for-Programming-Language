@@ -1,0 +1,9 @@
+queue a
+queue b = [40,20]
+a.top()
+a.push(3)
+b.push(30)
+b.top()
+b.poll()
+a.poll()
+a.poll()
