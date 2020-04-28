@@ -53,5 +53,5 @@ def lexer(file):
                 lex += ","
     lex = lex[:-1]
     lex += ']'
-    print(lex)
+    # print(lex)
     return lex
