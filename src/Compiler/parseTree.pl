@@ -113,6 +113,11 @@ conventional_for(Env, t_conventional_for(A,B,C,D,E,F)) --> [for], ['('], identif
 new_for(Env, t_new_for(A,B,C,D)) --> [for], identifier(A), [in],
     [range], ['('], expr(B), [,], expr(C), [')'], {update(A, num, Env, FinalEnv)}, ['{'], command(FinalEnv, _, D), ['}'].
 
+% stack operations
+stack_op(Env, t_push(X, Y)) --> identifier(X), [.] , [push], ['('], expr(Y) , [')'], {lookup(X, stack, Env)}.
+stack_op(Env, t_pop(X)) --> identifier(X), [.], [pop], ['('], [')'], {lookup(X, stack, Env)}.
+stack_op(Env, t_top(X)) --> identifier(X), [.], [top], ['('],[')'], {lookup(X, stack, Env)}.
+
 % General Statements and While loop
 statement(Env, FinalEnv, t_statement_declaration(X)) --> declaration(Env, FinalEnv, X).
 statement(Env, FinalEnv, t_statement_assign(X)) --> assignment(Env, FinalEnv, X).
