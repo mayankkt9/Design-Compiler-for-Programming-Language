@@ -38,6 +38,10 @@ You can get input file from sample folder
 
 * Install latest SWI-Prolog Version ([Click to Install 🚀](https://www.swi-prolog.org/download/stable/bin/swipl-8.0.3-1.x64.exe.envelope)) 
 
+* Now add swipl in environment varibales. Go to path in enviroment variable and add following.
+```
+path_to_swipl\swipl\bin;
+```
 * Make sure pip and python are installed on your windows and then run
 ```
 pip install -r requirements.txt
