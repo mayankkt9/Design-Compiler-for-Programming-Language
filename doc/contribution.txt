@@ -9,3 +9,14 @@ Raghavan - Semantics, Parse Tree Generation
 Harsh - Semantics, Parse Tree Generation
 Mayank - Lexer, Parse Tree Generation, main.py
 Prakhar - Parse tree generation, Lexer, main.py
+
+
+Detailed:
+
+Raghavan - Semantics for boolean, for, statement, decl, list, stack, queue, command. Lookup, update and check present for Semantics.Parse tree generation for stack, queue and list.
+
+Harsh - Semantics for expressions, ternary, ifelse, string concatination, assign, print, while, method, formal parameter to actual parameter conversion. Lookup, update for parse tree generation. Parse tree generation for method, print, string concatination.
+
+Mayank - Lexer token generation, handling of brackets and comments in lexer.py, handling writing to file and removing the file main method in main.py. Parse tree generation for expressions, command, ternary, decl, statement.
+
+Prakhar - Passing tokens from lexer to parseTree.pl and then that output to runtime.pl in main.py Parse tree generation for assign, ifelse, for, while, boolean.
