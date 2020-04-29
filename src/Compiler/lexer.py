@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from nltk.tokenize import sent_tokenize, word_tokenize
 from functools import reduce
 from tokenize import tokenize, untokenize, NUMBER, STRING, NAME, OP
 from io import BytesIO

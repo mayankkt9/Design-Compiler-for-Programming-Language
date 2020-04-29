@@ -5,7 +5,9 @@
 ``` 
 python3 main.py <inputfile>
 Example 
-python3 main.py sourcecode.rch
+python3 main.py sourcecode.rch (MAC)
+and 
+python main.py sourcecode.rch (Windows)
 ``` 
 
 ## 🕶  Project Video Link
