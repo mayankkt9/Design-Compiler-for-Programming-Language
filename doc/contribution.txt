@@ -4,8 +4,8 @@ Harsh - Writing grammar, Check the feasibility of using python to create tokens.
 Mayank - Writing grammar, Check feasibility of using ANTLR in our language.
 Prakhar - Writing grammar, Check feasibility of using prolog to create parse tree.
 
-Proposed work for develiverable 2:-
-Raghavan - Semantics
-Harsh - Semantics
-Mayank - Lexer
-Prakhar - Parse tree generation
+Develiverable 2:-
+Raghavan - Semantics, Parse Tree Generation
+Harsh - Semantics, Parse Tree Generation
+Mayank - Lexer, Parse Tree Generation, main.py
+Prakhar - Parse tree generation, Lexer, main.py
