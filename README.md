@@ -13,7 +13,6 @@ python main.py sourcecode.rch (Windows)
 ## 🕶  Project Video Link
 ------------------
 * Youtube Link - ([Link 🚀](https://youtu.be/_Fm1NnSAL7U)) 
-[![Youtube Video](https://youtu.be/_Fm1NnSAL7U)](https://youtu.be/_Fm1NnSAL7U)
 
 ## 🕶  Project Presentation Link
 ------------------
