@@ -13,6 +13,12 @@ python main.py sourcecode.rch (Windows)
 ## 🕶  Project Video Link
 ------------------
 * Youtube Link - ([Link 🚀](https://youtu.be/_Fm1NnSAL7U)) 
+[![Youtube Video](https://youtu.be/_Fm1NnSAL7U)](https://youtu.be/_Fm1NnSAL7U)
+
+## 🕶  Project Presentation Link
+------------------
+* Presentation Link - ([Link 🚀](https://github.com/mayankkt9/Design-Compiler-for-Programming-Language/tree/master/doc)) 
+
 
 
 ## ⚙  How to Install it on (MAC)
