@@ -60,6 +60,7 @@ python main.py inputfile
 You can get input file from sample folder
 
 
+
 ## ⚙  Tools Used
 ------------------
 * SWI-Prolog Desktop Application ([Link 🚀](https://www.swi-prolog.org/download/stable/)) 
